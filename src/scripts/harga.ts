@@ -1,4 +1,5 @@
 import { track } from './track';
+import { api } from './api';
 
 const PRICES = [29, 35, 39] as const;
 
@@ -23,7 +24,7 @@ track('upgrade_viewed', { price });
 const dialog = document.querySelector<HTMLDialogElement>('dialog.door')!;
 const email = dialog.querySelector<HTMLInputElement>('#w-email')!;
 const month = dialog.querySelector<HTMLInputElement>('#w-date')!;
-const err = dialog.querySelector<HTMLElement>('.error')!;
+const err = dialog.querySelector<HTMLElement>('.field-error')!;
 const status = dialog.querySelector<HTMLElement>('.status')!;
 const join = dialog.querySelector<HTMLButtonElement>('[data-join]')!;
 
@@ -47,7 +48,7 @@ dialog.querySelector('form')!.addEventListener('submit', async (e) => {
   join.disabled = true;
   status.textContent = 'Menyimpan…';
   try {
-    const res = await fetch('/api/waitlist', {
+    const res = await api('/api/waitlist', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ email: email.value.trim(), eventMonth: month.value || null, price }),

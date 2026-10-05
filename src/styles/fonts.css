@@ -1,0 +1,6 @@
+/* Self-hosted, Latin only (BM and EN), only the weights the system uses:
+   Fraunces 500 (display), Figtree 400/600 (body), Roboto Mono 500 (figures). */
+@import '@fontsource/fraunces/latin-500.css';
+@import '@fontsource/figtree/latin-400.css';
+@import '@fontsource/figtree/latin-600.css';
+@import '@fontsource/roboto-mono/latin-500.css';

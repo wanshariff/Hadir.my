@@ -1,10 +1,12 @@
 import { track } from './track';
+import { api, PREVIEW } from './api';
 
 interface Row { name: string; phone: string | null; status: 'hadir' | 'tak_hadir'; pax: number; message: string | null; updatedAt: string }
 
 const root = document.querySelector<HTMLElement>('main.wrap')!;
 const slug = root.dataset.slug!;
-const key = new URLSearchParams(location.hash.slice(1)).get('k');
+// The preview has no real keys; the hash can't carry state inside the preview frame either.
+const key = PREVIEW ? 'preview' : new URLSearchParams(location.hash.slice(1)).get('k');
 const dash = root.querySelector<HTMLElement>('.dash')!;
 const msg = root.querySelector<HTMLElement>('[data-msg]')!;
 const tbody = root.querySelector('tbody')!;
@@ -12,6 +14,7 @@ const empty = root.querySelector<HTMLElement>('.empty')!;
 let rows: Row[] = [];
 
 function render() {
+  root.querySelectorAll('.skeleton').forEach((el) => el.classList.remove('skeleton'));
   const yes = rows.filter((r) => r.status === 'hadir');
   root.querySelector('[data-people]')!.textContent = String(yes.reduce((n, r) => n + r.pax, 0));
   root.querySelector('[data-yes]')!.textContent = String(yes.length);
@@ -19,10 +22,12 @@ function render() {
   empty.hidden = rows.length > 0;
   tbody.replaceChildren(...rows.map((r) => {
     const tr = document.createElement('tr');
-    if (r.status !== 'hadir') tr.className = 'no';
-    for (const v of [r.name, r.status === 'hadir' ? String(r.pax) : 'Tak hadir', r.phone ?? '', r.message ?? '']) {
+    if (r.status !== 'hadir') tr.className = 'is-muted';
+    const cells: [string, string?][] = [[r.name], [r.status === 'hadir' ? String(r.pax) : 'Tak hadir', r.status === 'hadir' ? 'num' : undefined], [r.phone ?? '', 'num'], [r.message ?? '', 'prose']];
+    for (const [v, cls] of cells) {
       const td = document.createElement('td');
       td.textContent = v;
+      if (cls) td.className = cls;
       tr.append(td);
     }
     return tr;
@@ -30,7 +35,7 @@ function render() {
 }
 
 async function load() {
-  const res = await fetch(`/api/host?slug=${encodeURIComponent(slug)}`, { headers: { authorization: `Bearer ${key}` } });
+  const res = await api(`/api/host?slug=${encodeURIComponent(slug)}`, { headers: { authorization: `Bearer ${key}` } });
   if (res.status === 401 || res.status === 404) {
     dash.hidden = true;
     root.querySelector<HTMLElement>('.locked')!.hidden = false;
@@ -45,6 +50,7 @@ async function load() {
 }
 
 if (!key) {
+  dash.hidden = true;
   root.querySelector<HTMLElement>('.locked')!.hidden = false;
 } else {
   void load().then((ok) => {

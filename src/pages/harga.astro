@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 
 // Fake-door pricing (PRD: validation). The Kawal Tetamu button records intent; checkout does not exist yet.
 // Price variants RM29 / RM35 / RM39 are assigned per browser; ?p=29 forces one for testing.
@@ -18,83 +19,91 @@ const paid = [
 ];
 ---
 <Base title="Harga · Hadir" description="Kad digital percuma. Kawal Tetamu dibayar sekali untuk setiap majlis, tiada langganan.">
-  <main class="wrap">
-    <a class="home" href="/">hadir.my</a>
-    <h1>Percuma untuk kad. Bayar sekali bila perlu kawal tetamu.</h1>
-    <p class="lede">Tiada langganan. Bayar sekali untuk satu majlis.</p>
+  <div class="aurora page">
+    <SiteHeader current="harga" />
+    <main class="wrap">
+      <header class="intro">
+        <h1>Percuma untuk kad. Bayar sekali bila perlu kawal tetamu.</h1>
+        <p class="lede muted">Tiada langganan. Bayar sekali untuk satu majlis.</p>
+      </header>
 
-    <div class="tiers">
-      <section class="card tier">
-        <h2>Percuma</h2>
-        <p class="price">RM0</p>
-        <p class="hint">Tiada tarikh luput</p>
-        <ul>{free.map((f) => <li><Icon name="check" />{f}</li>)}</ul>
-        <a class="btn btn-block" href="/">Mula percuma</a>
-      </section>
+      <div class="tiers">
+        <section class="panel tier" aria-labelledby="t-free">
+          <h2 id="t-free" class="h5">Percuma</h2>
+          <p class="price"><span class="cur">RM</span>0</p>
+          <p class="hint">Tiada tarikh luput</p>
+          <ul>{free.map((f) => <li><Icon name="check" />{f}</li>)}</ul>
+          <a class="btn btn-block" href="/">Mula percuma</a>
+        </section>
 
-      <section class="card tier paid">
-        <h2>Kawal Tetamu</h2>
-        <p class="price">RM<span data-price>35</span></p>
-        <p class="hint">Sekali bayar, untuk satu majlis</p>
-        <p class="plus">Semua dalam Percuma, dan:</p>
-        <ul>{paid.map((f) => <li><Icon name="check" />{f}</li>)}</ul>
-        <button class="btn btn-primary btn-block" type="button" data-fake-door>Naik taraf ke Kawal Tetamu</button>
-      </section>
-    </div>
+        <section class="panel tier paid" aria-labelledby="t-paid">
+          <div class="tier-head">
+            <h2 id="t-paid" class="h5">Kawal Tetamu</h2>
+            <span class="badge">Sekali bayar</span>
+          </div>
+          <p class="price"><span class="cur">RM</span><span data-price>35</span></p>
+          <p class="hint">Untuk satu majlis</p>
+          <p class="plus">Semua dalam Percuma, dan:</p>
+          <ul>{paid.map((f) => <li><Icon name="check" />{f}</li>)}</ul>
+          <button class="btn btn-primary btn-block" type="button" data-fake-door>Naik taraf ke Kawal Tetamu</button>
+        </section>
+      </div>
 
-    <dialog class="card door" aria-labelledby="door-h">
-      <h2 id="door-h">Kawal Tetamu belum dibuka</h2>
-      <p>Kami sedang membinanya sekarang. Tinggalkan e-mel dan kami akan beritahu anda dahulu, dengan harga awal RM<span data-price>35</span>.</p>
-      <form method="dialog" novalidate>
-        <div class="field">
-          <label for="w-email">E-mel</label>
-          <input id="w-email" type="email" autocomplete="email" inputmode="email" required />
-          <p class="hint">Kami guna e-mel ini untuk berita Kawal Tetamu sahaja.</p>
-          <p class="error" hidden>Sila isi e-mel yang sah.</p>
+      <section class="faq" aria-labelledby="faq-h">
+        <h2 id="faq-h">Soalan lazim</h2>
+        <div class="accordion">
+          <details><summary>Adakah Hadir menyimpan wang salam kaut?</summary><p>Tidak. Hadir hanya memaparkan kod QR DuitNow anda sendiri. Wang terus masuk ke akaun anda.</p></details>
+          <details><summary>Boleh minta wang balik?</summary><p>Ya, wang dikembalikan penuh dalam 7 hari jika anda belum menghantar jemputan bernama.</p></details>
+          <details><summary>Berapa lama pautan kekal aktif?</summary><p>Sehingga anda padam majlis. Data tetamu dipadam 90 hari selepas majlis, kecuali anda simpan untuk guna semula.</p></details>
         </div>
-        <div class="field">
-          <label for="w-date">Bila majlis anda? (pilihan)</label>
-          <input id="w-date" type="month" />
-        </div>
-        <button class="btn btn-primary btn-block" type="submit" data-join>Beritahu saya</button>
-        <button class="btn btn-block close" type="button" data-close>Tutup</button>
-        <p class="status" role="status" aria-live="polite"></p>
-      </form>
-    </dialog>
+      </section>
+    </main>
+  </div>
 
-    <section class="faq">
-      <h2>Soalan lazim</h2>
-      <details><summary>Adakah Hadir menyimpan wang salam kaut?</summary><p>Tidak. Hadir hanya memaparkan kod QR DuitNow anda sendiri. Wang terus masuk ke akaun anda.</p></details>
-      <details><summary>Boleh minta wang balik?</summary><p>Ya, wang dikembalikan penuh dalam 7 hari jika anda belum menghantar jemputan bernama.</p></details>
-      <details><summary>Berapa lama pautan kekal aktif?</summary><p>Sehingga anda padam majlis. Data tetamu dipadam 90 hari selepas majlis, kecuali anda simpan untuk guna semula.</p></details>
-    </section>
-  </main>
+  <dialog class="dialog door" aria-labelledby="door-h">
+    <h2 id="door-h" class="h5">Kawal Tetamu belum dibuka</h2>
+    <p class="muted">Kami sedang membinanya sekarang. Tinggalkan e-mel dan kami akan beritahu anda dahulu, dengan harga awal RM<span data-price>35</span>.</p>
+    <form method="dialog" novalidate>
+      <div class="field">
+        <label for="w-email">E-mel</label>
+        <input id="w-email" type="email" autocomplete="email" inputmode="email" required />
+        <p class="hint">Kami guna e-mel ini untuk berita Kawal Tetamu sahaja.</p>
+        <p class="field-error" hidden>Sila isi e-mel yang sah.</p>
+      </div>
+      <div class="field">
+        <label for="w-date">Bila majlis anda? (pilihan)</label>
+        <input id="w-date" type="month" />
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" data-join>Beritahu saya</button>
+      <button class="btn btn-ghost btn-block" type="button" data-close>Tutup</button>
+      <p class="status hint" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
 
   <script src="../scripts/harga.ts"></script>
 </Base>
 
 <style>
-  .wrap { max-width: 880px; margin: 0 auto; padding: 24px 16px 64px; }
-  .home { font-weight: 700; text-decoration: none; display: inline-block; padding: 12px 0; }
-  h1 { font: 400 clamp(30px, 7vw, 44px)/1.15 var(--font-display); margin: 16px 0 8px; text-wrap: balance; }
-  .lede { color: var(--ink-2); margin: 0 0 28px; font-size: 18px; }
-  .tiers { display: grid; gap: 16px; }
-  @media (min-width: 768px) { .tiers { grid-template-columns: 1fr 1fr; } }
-  .tier { display: flex; flex-direction: column; }
-  .tier h2 { margin: 0; font-size: 20px; }
-  .paid { border: 2px solid var(--btn-bg); } /* marigold is too faint on white for an edge */
-  .price { font-size: 40px; font-weight: 700; margin: 8px 0 0; }
-  .plus { font-weight: 600; margin: 16px 0 0; }
-  ul { list-style: none; padding: 0; margin: 12px 0 24px; flex: 1; }
-  li { display: flex; gap: 10px; padding: 6px 0; }
-  li .icon { color: var(--ok); margin-top: 2px; }
-  .door { max-width: 440px; width: calc(100% - 32px); color: var(--ink); }
-  .door::backdrop { background: rgb(0 0 0 / 0.5); }
-  .door h2 { margin-top: 0; }
-  .close { margin-top: 8px; }
-  .status { text-align: center; color: var(--ink-2); min-height: 1.5em; }
-  .faq { margin-top: 48px; }
-  .faq details { border-bottom: 1px solid var(--line); }
-  .faq summary { cursor: pointer; font-weight: 600; min-height: 56px; display: flex; align-items: center; }
-  .faq p { margin: 0 0 16px; color: var(--ink-2); }
+  .page { min-height: 100dvh; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 var(--space-4) var(--space-16); display: grid; gap: var(--space-10); }
+  .intro { display: grid; gap: var(--space-3); padding-top: var(--space-8); max-width: 20em; }
+  .intro h1 { font-size: clamp(var(--text-h3), 7vw, var(--text-h1)); }
+  .lede { font-size: var(--text-h5); }
+  .tiers { display: grid; gap: var(--space-4); }
+  @media (min-width: 768px) { .tiers { grid-template-columns: 1fr 1fr; align-items: stretch; } }
+  .tier { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-6); }
+  .tier-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+  .paid { border: 2px solid var(--action-bg); }
+  .price { font: 500 var(--text-h1)/1 var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; margin-top: var(--space-3); }
+  .cur { font-size: 0.45em; vertical-align: 0.9em; margin-right: 2px; letter-spacing: 0; }
+  .plus { font-weight: var(--weight-body-strong); margin-top: var(--space-4); }
+  ul { list-style: none; padding: 0; margin: var(--space-3) 0 var(--space-6); flex: 1; display: grid; gap: var(--space-2); align-content: start; }
+  li { display: flex; gap: var(--space-3); }
+  li .icon { color: var(--success-fg); margin-top: 3px; }
+  .faq { display: grid; gap: var(--space-4); max-width: 640px; }
+  .faq h2 { font-size: var(--text-h3); }
+  .door[open] { display: grid; gap: var(--space-3); }
+  .door form { display: grid; gap: var(--space-4); margin-top: var(--space-2); }
+  .door form .btn-ghost { margin-top: calc(-1 * var(--space-2)); }
+  .status { text-align: center; min-height: 1.5em; }
 </style>

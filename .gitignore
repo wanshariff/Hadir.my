@@ -5,3 +5,5 @@ dist/
 .dev.vars
 .env
 server/events.generated.json
+dist-preview/
+preview-site/

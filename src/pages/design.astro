@@ -1,0 +1,496 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { SCALES, STEPS, primitives, PAIRS, checkPair, light, dark } from '../lib/tokens';
+
+const inputs: Record<string, number> = { brand: 500, secondary: 500, success: 500, info: 500, warning: 300, error: 500 };
+
+const pairs = PAIRS.map((p) => {
+  const l = checkPair(light, p.fg, p.bg);
+  const d = checkPair(dark, p.fg, p.bg);
+  return { ...p, l, d, pass: l.ratio >= p.min && d.ratio >= p.min };
+});
+const fmt = (n: number) => `${n.toFixed(2)}:1`;
+
+const roles = [
+  ['bg', 'Page background'], ['surface', 'Aurora panel (translucent)'], ['surface-solid', 'Dialogs, inputs'],
+  ['text', 'Body text'], ['text-muted', 'Secondary text'], ['link', 'Links'], ['focus', 'Focus ring'],
+  ['action-bg', 'Primary button fill'], ['action-fg', 'Primary button label'], ['accent', 'Decoration only'],
+  ['badge-bg', 'Badge fill'], ['badge-fg', 'Badge label'],
+];
+const ref = (v: string) => v.replace(/^var\(--color-(.+)\)$/, '$1');
+
+const type = [
+  { token: 'h1', px: '48.83', sample: 'Sofea & Adam', cls: 'h1' },
+  { token: 'h2', px: '39.06', sample: 'Adakah anda akan hadir?', cls: 'h2' },
+  { token: 'h3', px: '31.25', sample: 'Walimatul Urus', cls: 'h3' },
+  { token: 'h4', px: '25', sample: 'Kami sedang buka secara berperingkat', cls: 'h4' },
+  { token: 'h5', px: '20', sample: 'Kawal Tetamu', cls: 'h5' },
+  { token: 'guest', px: '18', sample: 'Sabtu, 12 Disember 2026, Dewan Seri Melati, Shah Alam', cls: 'guest' },
+  { token: 'body', px: '16', sample: 'Hanya tuan rumah nampak nombor telefon anda.', cls: 'body' },
+  { token: 'small', px: '12.8', sample: 'DIKEMAS KINI SETIAP 10 SAAT', cls: 'small' },
+];
+
+const space = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16];
+
+type Status = 'Built' | 'Planned' | 'Not in v1';
+const inventory: { group: string; items: [string, Status, string][] }[] = [
+  { group: 'Inputs & controls', items: [
+    ['Button', 'Built', 'Primary, secondary, ghost, icon, pressed'],
+    ['Text field & textarea', 'Built', 'RSVP, waitlist'],
+    ['Checkbox', 'Planned', 'Bulk-select named invites (F10)'],
+    ['Radio button', 'Planned', 'Pick a session (F14)'],
+    ['Switch / toggle', 'Planned', 'Salam kaut on/off (F7)'],
+    ['Select / dropdown', 'Planned', 'Event type in the editor (F1)'],
+    ['Slider', 'Not in v1', 'A stepper is easier for elders to set exactly'],
+    ['Date / time picker', 'Planned', 'Editor (F1); native input first'],
+    ['File upload / dropzone', 'Planned', 'Cover image (F1), DuitNow QR (F7)'],
+    ['Combobox / autocomplete', 'Planned', 'Venue search (F1)'],
+  ] },
+  { group: 'Navigation & layout', items: [
+    ['App bar / navbar', 'Built', 'Site header; guest bottom bar'],
+    ['Drawer / sidebar', 'Not in v1', 'Mobile-first: bottom navigation instead'],
+    ['Tabs', 'Planned', 'Host app: Majlis · Tetamu · Kongsi · Tetapan'],
+    ['Breadcrumbs', 'Not in v1', 'IA is flat'],
+    ['Pagination', 'Planned', 'Guest lists over 200 rows'],
+    ['Accordion', 'Built', 'FAQ, optional doa field'],
+    ['Stepper', 'Built', 'Number stepper for people count; progress stepper planned for the editor'],
+    ['Carousel', 'Not in v1', 'Template gallery uses a grid'],
+    ['Divider', 'Built', 'Border token only'],
+  ] },
+  { group: 'Data display', items: [
+    ['Card', 'Built', 'Panel: translucent Aurora surface'],
+    ['Data table', 'Built', 'Host response list'],
+    ['Avatar', 'Planned', 'Co-hosts (F11)'],
+    ['Badge / tag', 'Built', 'Event type, plan'],
+    ['List', 'Built', 'Replies from this phone'],
+    ['Timeline', 'Planned', 'RSVP activity feed'],
+    ['Tree view', 'Not in v1', 'No hierarchical data'],
+    ['Tooltip', 'Planned', 'Icon-only host actions'],
+  ] },
+  { group: 'Feedback & overlays', items: [
+    ['Dialog / modal', 'Built', 'Fake-door waitlist'],
+    ['Snackbar / toast', 'Planned', 'Copy confirmations; today a live status line'],
+    ['Alert / banner', 'Built', 'Success, warning, error, info'],
+    ['Progress indicator', 'Built', 'Headcount meter on the home page'],
+    ['Skeleton loader', 'Built', 'Host stats while loading'],
+    ['Popover', 'Planned', 'Share options'],
+    ['Context menu', 'Planned', 'Row actions on named invites (F10)'],
+  ] },
+];
+const counts = inventory.flatMap((g) => g.items).reduce((a, [, s]) => ({ ...a, [s]: (a[s] ?? 0) + 1 }), {} as Record<string, number>);
+---
+<Base title="Hadir Design System" description="Tokens, type, colour and components for hadir.my." noindex>
+  <SiteHeader current="design" />
+  <main class="ds">
+    <header class="ds-hero aurora">
+      <p class="badge">v0.1 · 5 Oktober 2026</p>
+      <h1>Hadir Design System</h1>
+      <p class="lede">Built from the Pairwise spec of 5 Oct 2026, extended for a product that guests aged 20 to 80 open from a WhatsApp forward. Every value on this page is read from <code class="mono">src/styles/tokens.css</code> at build time.</p>
+      <div class="theme-switch" role="group" aria-label="Tema">
+        <button class="btn" type="button" data-theme-set="light" aria-pressed="false"><Icon name="sun" />Cerah</button>
+        <button class="btn" type="button" data-theme-set="dark" aria-pressed="false"><Icon name="moon" />Gelap</button>
+        <button class="btn" type="button" data-theme-set="" aria-pressed="true"><Icon name="monitor" />Sistem</button>
+      </div>
+    </header>
+
+    <nav class="toc panel" aria-label="Kandungan">
+      <a href="#principles">Principles</a><a href="#changes">Changes to the spec</a><a href="#color">Colour</a><a href="#contrast">Contrast</a>
+      <a href="#type">Type</a><a href="#tokens">Space, radius, motion</a><a href="#aurora">Aurora</a><a href="#components">Components</a><a href="#inventory">Inventory</a>
+    </nav>
+
+    <section id="principles" class="sec">
+      <h2>Principles</h2>
+      <ol class="principles">
+        <li class="panel"><h3 class="h5">The guest decides in 30 seconds</h3><p class="muted">Date, place and a one-tap answer come first. Everything else waits below the RSVP.</p></li>
+        <li class="panel"><h3 class="h5">Trust is visible</h3><p class="muted">"Pautan web · tiada muat turun" appears on every invite. No pattern here may look like a download or an app install.</p></li>
+        <li class="panel"><h3 class="h5">Tok can read it</h3><p class="muted">18px body on guest pages, 48px targets, plain BM. Contrast is tested in code, not eyeballed.</p></li>
+        <li class="panel"><h3 class="h5">Calm, then celebration</h3><p class="muted">Aurora sits behind headers only. Tahlil, a memorial gathering, drops the warm accent and the Aurora entirely.</p></li>
+      </ol>
+    </section>
+
+    <section id="changes" class="sec">
+      <h2>Changes to the spec</h2>
+      <p class="muted sec-lede">Where this system departs from the Pairwise export, and why.</p>
+      <div class="panel panel-solid table-wrap flush">
+        <table class="table">
+          <thead><tr><th scope="col">Spec</th><th scope="col">Hadir</th><th scope="col">Why</th></tr></thead>
+          <tbody>
+            <tr><td>Dark action: brand-400 on neutral-950</td><td>secondary-500 fill, brand-950 label</td><td>The spec's own check fails at 2.95:1. Marigold reaches 10.65:1 against the page.</td></tr>
+            <tr><td>Load Fraunces 300–900, Figtree 300–800</td><td>Fraunces 500, Figtree 400 + 600, Roboto Mono 500</td><td>Only these are used. The PRD caps the guest page at LCP 2.0 s on 4G.</td></tr>
+            <tr><td>Google Fonts link</td><td>Self-hosted, Latin subset</td><td>No third-party request on a page we tell guests is safe. The preview build uses Google Fonts.</td></tr>
+            <tr><td>Body 16px</td><td>16px, and 18px on guest pages</td><td>PRD: elder readers.</td></tr>
+            <tr><td>No spacing scale</td><td>4px grid, <code class="mono">--space-1</code> to <code class="mono">--space-16</code></td><td>Layouts were inventing values.</td></tr>
+            <tr><td>Aurora "for hero backgrounds"</td><td>Headers only; never on /selamat or tahlil</td><td>The spec's own warning: motion pulls focus.</td></tr>
+            <tr><td>Mono for "code, IDs and figures"</td><td>Mono for bare figures only</td><td>Mono sentences read as machine output on an invitation.</td></tr>
+            <tr><td>Primitives used directly</td><td>Semantic roles layer</td><td>Components switch theme by role, not by hex.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="color" class="sec">
+      <h2>Colour</h2>
+      <p class="muted sec-lede">OKLCH scales. Bold steps are the spec's input colours. Brand is for actions; secondary is decoration only; status colours carry meaning and never decorate.</p>
+      <div class="scales">
+        {SCALES.map((s) => (
+          <div class="scale">
+            <p class="scale-name">{s}</p>
+            <div class="swatches">
+              {STEPS.map((n) => (
+                <div class={`sw${inputs[s] === n ? ' is-input' : ''}`}>
+                  <span class="chip" style={`background:${primitives[`${s}-${n}`]}`}></span>
+                  <span class="mono sw-step">{n}</span>
+                  <span class="mono sw-hex">{primitives[`${s}-${n}`]}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="h5 sub">Semantic roles</h3>
+      <div class="panel panel-solid table-wrap flush">
+        <table class="table">
+          <thead><tr><th scope="col">Token</th><th scope="col">Use</th><th scope="col">Light</th><th scope="col">Dark</th></tr></thead>
+          <tbody>
+            {roles.map(([k, use]) => (
+              <tr>
+                <td class="mono">--{k}</td><td>{use}</td>
+                <td><span class="role"><span class="dot" style={`background:${light[k].startsWith('rgb') ? light[k] : 'var(--color-' + ref(light[k]) + ', ' + light[k] + ')'}`}></span><span class="mono">{ref(light[k])}</span></span></td>
+                <td><span class="role"><span class="dot" style={`background:${dark[k] ? (dark[k].startsWith('rgb') ? dark[k] : 'var(--color-' + ref(dark[k]) + ', ' + dark[k] + ')') : 'transparent'}`}></span><span class="mono">{dark[k] ? ref(dark[k]) : 'same'}</span></span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="contrast" class="sec">
+      <h2>Contrast</h2>
+      <p class="muted sec-lede">Every pair below is also a unit test (<code class="mono">src/lib/tokens.test.ts</code>), so a token change that breaks one fails the build. Translucent panels are measured after flattening over the page colour.</p>
+      <div class="panel panel-solid table-wrap flush">
+        <table class="table contrast">
+          <thead><tr><th scope="col">Use</th><th scope="col">Needs</th><th scope="col">Light</th><th scope="col">Dark</th><th scope="col">Result</th></tr></thead>
+          <tbody>
+            {pairs.map((p) => (
+              <tr>
+                <td>{p.use}</td>
+                <td class="num">{p.min}:1</td>
+                <td class="num"><span class="pair" style={`background:${p.l.bgHex};color:${p.l.fgHex}`}>Aa</span>{fmt(p.l.ratio)}</td>
+                <td class="num"><span class="pair" style={`background:${p.d.bgHex};color:${p.d.fgHex}`}>Aa</span>{fmt(p.d.ratio)}</td>
+                <td>{p.pass ? <span class="ok"><Icon name="circle-check" />Pass</span> : <span class="bad"><Icon name="circle-x" />Fail</span>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="alert alert-info"><Icon name="info" /><span>Marigold (secondary-500) is 1.8:1 on the light page. It is a fill, never text, on light surfaces. For marigold-family text on light, use secondary-800 or darker.</span></p>
+    </section>
+
+    <section id="type" class="sec">
+      <h2>Type</h2>
+      <p class="muted sec-lede">Fraunces 500 for display, tracking −0.01em. Figtree for text, leading 1.55. Roboto Mono for bare figures only: headcounts, prices, phone numbers, URLs. Sentences that contain numbers ("Lagi 68 hari", "11:00 PG – 4:00 PTG") stay in Figtree with tabular numerals. Major third scale (1.25) on a 16px base.</p>
+      <div class="panel panel-solid type-list">
+        {type.map((t) => (
+          <div class="type-row">
+            <p class="mono type-meta">{t.token}<span>{t.px}px</span></p>
+            <p class={`spec-${t.cls}`}>{t.sample}</p>
+          </div>
+        ))}
+        <div class="type-row">
+          <p class="mono type-meta">figure<span>mono 500</span></p>
+          <p class="spec-figure">450 · RM35 · 012-3456789</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tokens" class="sec">
+      <h2>Space, radius, motion</h2>
+      <div class="token-grid">
+        <div class="panel panel-solid">
+          <h3 class="h5">Space · 4px grid</h3>
+          <ul class="space-list">
+            {space.map((n) => <li><span class="mono">--space-{n}</span><span class="bar" style={`width:var(--space-${n})`}></span><span class="mono muted">{n * 4}px</span></li>)}
+          </ul>
+        </div>
+        <div class="panel panel-solid">
+          <h3 class="h5">Radius</h3>
+          <div class="radii">
+            <div><span class="rad" style="border-radius:var(--radius-sm)"></span><p class="mono">sm 12</p><p class="muted small">Inputs</p></div>
+            <div><span class="rad" style="border-radius:var(--radius-md)"></span><p class="mono">md 14</p><p class="muted small">Buttons, alerts</p></div>
+            <div><span class="rad" style="border-radius:var(--radius-lg)"></span><p class="mono">lg 20</p><p class="muted small">Panels, dialogs</p></div>
+          </div>
+        </div>
+        <div class="panel panel-solid">
+          <h3 class="h5">Motion and size</h3>
+          <dl class="kv">
+            <dt class="mono">--motion-fast</dt><dd>150ms · hover, press</dd>
+            <dt class="mono">--motion-base</dt><dd>240ms · open, close</dd>
+            <dt class="mono">--target-min</dt><dd>48px · every primary control</dd>
+            <dt class="mono">--blur-surface</dt><dd>12px · panels, bottom bar</dd>
+            <dt class="mono">--shadow-card</dt><dd>none · edges come from borders</dd>
+          </dl>
+          <p class="muted small">All motion stops under prefers-reduced-motion.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="aurora" class="sec">
+      <h2>Aurora</h2>
+      <p class="muted sec-lede">Three soft radial gradients drifting over 24 seconds. Only <code class="mono">transform</code> animates and there is no filter blur, so it stays cheap on a mid-range Android phone.</p>
+      <div class="aurora-demo aurora">
+        <div class="panel"><p class="h5">Text sits on a panel</p><p class="muted">Panels are 78–80% opaque with a 12px backdrop blur, so body text never reads against the gradient at full strength.</p></div>
+      </div>
+      <ul class="rules">
+        <li><Icon name="circle-check" />Use behind page headers: invite cover, home hero, host header.</li>
+        <li><Icon name="circle-check" />Put text on a <code class="mono">.panel</code> when it sits over Aurora below a header.</li>
+        <li><Icon name="circle-x" />Not on /selamat, which wary readers study closely.</li>
+        <li><Icon name="circle-x" />Not on tahlil invites: <code class="mono">data-tone="muted"</code> sets its opacity to 0.</li>
+      </ul>
+    </section>
+
+    <section id="components" class="sec">
+      <h2>Components</h2>
+      <div class="comp-grid">
+        <article class="panel panel-solid comp">
+          <h3 class="h5">Button</h3>
+          <div class="demo row-wrap">
+            <button class="btn btn-primary" type="button">Hantar jawapan</button>
+            <button class="btn" type="button">Waze</button>
+            <button class="btn btn-ghost" type="button">Tutup</button>
+            <button class="btn btn-icon" type="button" aria-label="Tambah"><Icon name="plus" /></button>
+            <button class="btn" type="button" aria-pressed="true"><Icon name="check" />Hadir</button>
+            <button class="btn btn-primary" type="button" disabled>Menyimpan…</button>
+          </div>
+          <p class="muted small">One primary per view. Pressed state is for choices (Hadir / Tak dapat hadir), not for toggling style.</p>
+        </article>
+
+        <article class="panel panel-solid comp">
+          <h3 class="h5">Text field</h3>
+          <div class="demo stack-sm">
+            <div class="field"><label for="d-name">Nama</label><input id="d-name" value="Aina binti Ali" /></div>
+            <div class="field"><label for="d-err">E-mel</label><input id="d-err" value="aina@" aria-invalid="true" aria-describedby="d-err-m" /><p class="field-error" id="d-err-m">Sila isi e-mel yang sah.</p></div>
+          </div>
+          <p class="muted small">Labels always visible. Validate on blur, clear the error while typing.</p>
+        </article>
+
+        <article class="panel panel-solid comp">
+          <h3 class="h5">Stepper</h3>
+          <div class="demo">
+            <div class="stepper" role="group" aria-label="Bilangan orang">
+              <button type="button" class="btn btn-icon" aria-label="-1" data-demo-step="-1"><Icon name="minus" /></button>
+              <output class="demo-pax">2</output>
+              <button type="button" class="btn btn-icon" aria-label="+1" data-demo-step="1"><Icon name="plus" /></button>
+            </div>
+          </div>
+          <p class="muted small">Exact counts for headcount. Capped on the server, not only in the UI.</p>
+        </article>
+
+        <article class="panel panel-solid comp">
+          <h3 class="h5">Badge</h3>
+          <div class="demo row-wrap"><span class="badge">Walimatul Urus</span><span class="badge">Kawal Tetamu</span></div>
+          <p class="muted small">Event type and plan. Not for status: use an alert or table text.</p>
+        </article>
+
+        <article class="panel panel-solid comp wide">
+          <h3 class="h5">Alert</h3>
+          <div class="demo stack-sm">
+            <p class="alert alert-success"><Icon name="circle-check" />Terima kasih! Jumpa di majlis.</p>
+            <p class="alert alert-warning"><Icon name="triangle-alert" />Pautan ini tidak lengkap.</p>
+            <p class="alert alert-error"><Icon name="circle-x" />Tak berjaya disimpan. Cuba sekali lagi.</p>
+            <p class="alert alert-info"><Icon name="info" />Kawal Tetamu belum dibuka.</p>
+          </div>
+        </article>
+
+        <article class="panel panel-solid comp">
+          <h3 class="h5">Stat and skeleton</h3>
+          <div class="demo row-wrap stats-demo">
+            <div><p class="stat-value">450</p><p class="stat-label">orang hadir</p></div>
+            <div><p class="stat-value"><span class="skeleton">00</span></p><p class="stat-label">memuatkan</p></div>
+          </div>
+          <p class="muted small">Figures in Roboto Mono, tabular. Skeletons keep the layout still while loading.</p>
+        </article>
+
+        <article class="panel panel-solid comp">
+          <h3 class="h5">Accordion</h3>
+          <div class="demo accordion">
+            <details><summary>Boleh minta wang balik?</summary><p>Ya, dalam 7 hari jika belum menghantar jemputan bernama.</p></details>
+            <details><summary>Berapa lama pautan aktif?</summary><p>Sehingga anda padam majlis.</p></details>
+          </div>
+        </article>
+
+        <article class="panel panel-solid comp">
+          <h3 class="h5">Dialog</h3>
+          <div class="demo"><button class="btn" type="button" data-open-dialog>Buka contoh dialog</button></div>
+          <p class="muted small">Native <code class="mono">&lt;dialog&gt;</code>: focus trap and Esc for free.</p>
+          <dialog class="dialog demo-dialog" aria-labelledby="dd-h">
+            <h4 id="dd-h" class="h5">Kawal Tetamu belum dibuka</h4>
+            <p class="muted">Tinggalkan e-mel dan kami akan beritahu anda dahulu.</p>
+            <form method="dialog"><button class="btn btn-primary btn-block">Faham</button></form>
+          </dialog>
+        </article>
+
+        <article class="panel panel-solid comp wide">
+          <h3 class="h5">Data table</h3>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th scope="col">Nama</th><th scope="col">Orang</th><th scope="col">Telefon</th></tr></thead>
+              <tbody>
+                <tr><td>Mak Long Rohana</td><td class="num">4</td><td class="num">012-3456789</td></tr>
+                <tr class="is-muted"><td>Pak Cik Salleh</td><td>Tak hadir</td><td class="num">019-8765432</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted small">Numbers right where people scan them, in mono. Declines are muted, not removed.</p>
+        </article>
+
+        <article class="panel panel-solid comp wide">
+          <h3 class="h5">Bottom app bar</h3>
+          <div class="demo">
+            <nav class="app-bar demo-bar" aria-label="Contoh">
+              <a href="#components"><Icon name="circle-check" /><span>Hadir</span></a>
+              <a href="#components"><Icon name="map-pin" /><span>Peta</span></a>
+              <a href="#components"><Icon name="calendar-plus" /><span>Kalendar</span></a>
+            </nav>
+          </div>
+          <p class="muted small">Guest invite only. Three actions, labelled; icons never stand alone.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="inventory" class="sec">
+      <h2>Inventory</h2>
+      <p class="muted sec-lede">The spec previews 34 components. v1 builds what the PRD needs now: <strong>{counts['Built']} built</strong>, <strong>{counts['Planned']} planned</strong> against a PRD feature, <strong>{counts['Not in v1']} not in v1</strong>.</p>
+      <div class="inv-grid">
+        {inventory.map((g) => (
+          <div class="panel panel-solid inv">
+            <h3 class="h5">{g.group}</h3>
+            <ul>
+              {g.items.map(([name, status, note]) => (
+                <li>
+                  <div class="inv-head"><span>{name}</span><span class={`st st-${status === 'Built' ? 'built' : status === 'Planned' ? 'planned' : 'no'}`}>{status}</span></div>
+                  <p class="muted small">{note}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <script is:inline>
+    (function () {
+      var root = document.documentElement;
+      var btns = document.querySelectorAll('[data-theme-set]');
+      function apply(v) {
+        if (v) root.setAttribute('data-theme', v); else root.removeAttribute('data-theme');
+        btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-theme-set') === v)); });
+      }
+      btns.forEach(function (b) { b.addEventListener('click', function () { apply(b.getAttribute('data-theme-set')); }); });
+      var pax = 2, out = document.querySelector('.demo-pax');
+      document.querySelectorAll('[data-demo-step]').forEach(function (b) {
+        b.addEventListener('click', function () { pax = Math.min(10, Math.max(1, pax + Number(b.getAttribute('data-demo-step')))); out.textContent = pax; });
+      });
+      var dlg = document.querySelector('.demo-dialog');
+      document.querySelector('[data-open-dialog]').addEventListener('click', function () { dlg.showModal(); });
+    })();
+  </script>
+</Base>
+
+<style>
+  .ds { max-width: 1080px; margin: 0 auto; padding: 0 var(--space-4) var(--space-16); display: grid; gap: var(--space-12); }
+  .ds-hero { display: grid; gap: var(--space-4); justify-items: start; padding: var(--space-10) 0 var(--space-2); }
+  .ds-hero .lede { font-size: var(--text-h5); color: var(--text-muted); max-width: 44ch; }
+  code { font-size: 0.9em; }
+  .theme-switch { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .toc { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); padding: var(--space-3); }
+  .toc a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 var(--space-3); border-radius: var(--radius-sm); text-decoration: none; color: var(--text); font-weight: var(--weight-body-strong); font-size: 0.9375rem; }
+  .toc a:hover { background: var(--surface-sunken); }
+  .sec { display: grid; gap: var(--space-5); scroll-margin-top: 96px; min-width: 0; }
+  .sec > h2 { font-size: var(--text-h2); }
+  .sec-lede { max-width: 65ch; margin-top: calc(-1 * var(--space-2)); }
+  .sub { margin-top: var(--space-4); }
+  .flush { padding: 0; }
+  .flush .table th:first-child, .flush .table td:first-child { padding-left: var(--space-5); }
+
+  .principles { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  @media (min-width: 768px) { .principles { grid-template-columns: repeat(2, 1fr); } }
+  .principles li { display: grid; gap: var(--space-2); align-content: start; }
+
+  .scales { display: grid; gap: var(--space-5); }
+  .scale { display: grid; gap: var(--space-2); min-width: 0; }
+  .scale-name { font-weight: var(--weight-body-strong); text-transform: capitalize; }
+  .swatches { display: grid; grid-template-columns: repeat(11, minmax(64px, 1fr)); gap: var(--space-1); overflow-x: auto; padding-bottom: var(--space-1); }
+  .sw { display: grid; gap: 2px; }
+  .chip { display: block; height: 48px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+  .sw.is-input .chip { outline: 2px solid var(--text); outline-offset: 2px; }
+  .sw-step { font-size: var(--text-small); font-weight: 500; }
+  .sw-hex { font-size: var(--text-small); color: var(--text-muted); }
+  .sw.is-input .sw-step, .sw.is-input .sw-hex { color: var(--text); font-weight: 700; }
+  .role { display: inline-flex; align-items: center; gap: var(--space-2); white-space: nowrap; }
+  .dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border-control); flex: none; }
+
+  .pair { display: inline-grid; place-items: center; width: 32px; height: 24px; margin-right: var(--space-2); border-radius: 6px; font: 600 0.8125rem/1 var(--font-body); border: 1px solid var(--border); vertical-align: middle; }
+  .contrast td { white-space: nowrap; }
+  .contrast td:first-child { white-space: normal; min-width: 180px; }
+  .ok, .bad { display: inline-flex; gap: var(--space-1); align-items: center; font-weight: var(--weight-body-strong); }
+  .ok { color: var(--success-fg); }
+  .bad { color: var(--error-fg); }
+
+  .type-list { display: grid; padding: 0; }
+  .type-row { display: grid; gap: var(--space-1); padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border); min-width: 0; }
+  .type-row:last-child { border-bottom: 0; }
+  @media (min-width: 768px) { .type-row { grid-template-columns: 140px 1fr; align-items: baseline; gap: var(--space-6); } }
+  .type-meta { font-size: var(--text-small); color: var(--text-muted); display: flex; gap: var(--space-3); }
+  .spec-h1, .spec-h2, .spec-h3, .spec-h4 { font-family: var(--font-display); font-weight: var(--weight-display); letter-spacing: var(--tracking-display); line-height: 1.12; overflow-wrap: anywhere; }
+  .spec-h1 { font-size: var(--text-h1); } .spec-h2 { font-size: var(--text-h2); } .spec-h3 { font-size: var(--text-h3); } .spec-h4 { font-size: var(--text-h4); }
+  .spec-h5 { font: var(--weight-body-strong) var(--text-h5)/1.3 var(--font-body); }
+  .spec-guest { font-size: var(--text-guest); } .spec-body { font-size: var(--text-body); }
+  .spec-small { font-size: var(--text-small); font-weight: var(--weight-body-strong); letter-spacing: 0.08em; }
+  .spec-figure { font: 500 var(--text-h4)/1.2 var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .token-grid { display: grid; gap: var(--space-4); }
+  @media (min-width: 900px) { .token-grid { grid-template-columns: 1.2fr 1fr 1fr; } }
+  .token-grid > .panel { display: grid; gap: var(--space-4); align-content: start; }
+  .space-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+  .space-list li { display: grid; grid-template-columns: 96px 1fr 44px; align-items: center; gap: var(--space-3); font-size: 0.875rem; }
+  .bar { display: block; height: 12px; background: var(--action-bg); border-radius: 3px; }
+  .radii { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+  .rad { display: block; aspect-ratio: 1; max-width: 100%; background: var(--surface-sunken); border: 2px solid var(--border-control); margin-bottom: var(--space-2); }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2) var(--space-4); margin: 0; font-size: 0.9375rem; }
+  .kv dt { font-size: 0.8125rem; }
+  .kv dd { margin: 0; color: var(--text-muted); }
+
+  .aurora-demo { border-radius: var(--radius-lg); border: 1px solid var(--border); padding: var(--space-12) var(--space-5); min-height: 240px; display: grid; place-items: center; }
+  .aurora-demo .panel { max-width: 420px; display: grid; gap: var(--space-2); }
+  .rules { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+  .rules li { display: flex; gap: var(--space-2); align-items: flex-start; }
+  .rules li .icon { margin-top: 3px; }
+  .rules li:nth-child(-n+2) .icon { color: var(--success-fg); }
+  .rules li:nth-child(n+3) .icon { color: var(--error-fg); }
+
+  .comp-grid { display: grid; gap: var(--space-4); }
+  @media (min-width: 768px) { .comp-grid { grid-template-columns: repeat(2, 1fr); } .comp.wide { grid-column: 1 / -1; } }
+  .comp { display: grid; gap: var(--space-4); align-content: start; min-width: 0; }
+  .demo { padding: var(--space-5); border-radius: var(--radius-md); background: var(--bg); border: 1px dashed var(--border); min-width: 0; }
+  .row-wrap { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+  .stack-sm { display: grid; gap: var(--space-3); }
+  .stats-demo { gap: var(--space-8); }
+  .demo-bar { position: static; height: var(--bar-h); padding-bottom: 0; border: 1px solid var(--border); border-radius: var(--radius-md); }
+  .demo-dialog { display: none; }
+  .demo-dialog[open] { display: grid; gap: var(--space-3); }
+
+  .inv-grid { display: grid; gap: var(--space-4); }
+  @media (min-width: 768px) { .inv-grid { grid-template-columns: repeat(2, 1fr); } }
+  .inv { display: grid; gap: var(--space-3); align-content: start; }
+  .inv ul { list-style: none; padding: 0; margin: 0; display: grid; }
+  .inv li { padding: var(--space-3) 0; border-top: 1px solid var(--border); display: grid; gap: 2px; }
+  .inv-head { display: flex; justify-content: space-between; gap: var(--space-3); font-weight: var(--weight-body-strong); }
+  .st { font-size: var(--text-small); font-weight: var(--weight-body-strong); padding: 2px var(--space-2); border-radius: 999px; white-space: nowrap; align-self: start; }
+  .st-built { background: var(--success-bg); color: var(--success-fg); }
+  .st-planned { background: var(--info-bg); color: var(--info-fg); }
+  .st-no { background: var(--surface-sunken); color: var(--text-muted); }
+</style>

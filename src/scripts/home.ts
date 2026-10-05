@@ -1,4 +1,5 @@
 import { track } from './track';
+import { api } from './api';
 
 const params = new URLSearchParams(location.search);
 const ref = params.get('ref');
@@ -7,7 +8,7 @@ track('landing_viewed', { source: params.get('utm_source') ?? 'direct' });
 const form = document.querySelector<HTMLFormElement>('.join form')!;
 const email = form.querySelector<HTMLInputElement>('#j-email')!;
 const month = form.querySelector<HTMLInputElement>('#j-date')!;
-const err = form.querySelector<HTMLElement>('.error')!;
+const err = form.querySelector<HTMLElement>('.field-error')!;
 const status = form.querySelector<HTMLElement>('.status')!;
 const btn = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
 
@@ -25,7 +26,7 @@ form.addEventListener('submit', async (e) => {
   btn.disabled = true;
   status.textContent = 'Menyimpan…';
   try {
-    const res = await fetch('/api/waitlist', {
+    const res = await api('/api/waitlist', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ email: email.value.trim(), eventMonth: month.value || null, source: ref ? `invite:${ref}` : 'home' }),

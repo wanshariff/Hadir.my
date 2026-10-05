@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 
 const checks = [
   { icon: 'globe', title: 'Pautan bermula dengan hadir.my', body: 'Kad Hadir yang sebenar sentiasa di hadir.my/nama-majlis. Tiada pautan pendek, tiada subdomain pelik.' },
@@ -10,31 +11,31 @@ const checks = [
 ];
 ---
 <Base title="Cara semak pautan · Hadir" description="Cara mengenal kad jemputan Hadir yang sebenar dan mengelak penipuan fail APK.">
+  <SiteHeader current="selamat" />
   <main class="wrap">
-    <a class="home" href="/">hadir.my</a>
-    <h1>Selamat dibuka. Ini caranya untuk semak.</h1>
-    <p class="lede">Sejak 2023, ada penipu menghantar "kad kahwin" palsu dalam bentuk fail APK. Kad Hadir tidak pernah begitu.</p>
-    <ol class="checks">
+    <header class="intro">
+      <h1>Selamat dibuka. Ini caranya untuk semak.</h1>
+      <p class="lede muted">Sejak 2023, ada penipu menghantar "kad kahwin" palsu dalam bentuk fail APK. Kad Hadir tidak pernah begitu.</p>
+    </header>
+    <ul class="checks">
       {checks.map((c) => (
-        <li class="card">
+        <li class="panel panel-solid">
           <Icon name={c.icon} />
-          <div><h2>{c.title}</h2><p>{c.body}</p></div>
+          <div><h2 class="h5">{c.title}</h2><p class="muted">{c.body}</p></div>
         </li>
       ))}
-    </ol>
-    <p class="card warn"><strong>Ragu-ragu?</strong> Tanya terus kepada orang yang menjemput anda sebelum membuka apa-apa pautan.</p>
+    </ul>
+    <p class="alert alert-warning"><Icon name="triangle-alert" /><span><strong>Ragu-ragu?</strong> Tanya terus kepada orang yang menjemput anda sebelum membuka apa-apa pautan.</span></p>
   </main>
 </Base>
 
 <style>
-  .wrap { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; font-size: 18px; }
-  .home { font-weight: 700; text-decoration: none; display: inline-block; padding: 12px 0; }
-  h1 { font: 400 clamp(30px, 7vw, 42px)/1.15 var(--font-display); margin: 16px 0 12px; text-wrap: balance; }
-  .lede { color: var(--ink-2); margin: 0 0 28px; }
-  .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-  .checks li { display: flex; gap: 14px; }
-  .checks .icon { width: 24px; height: 24px; color: var(--ok); margin-top: 2px; }
-  .checks h2 { font-size: 18px; margin: 0 0 4px; }
-  .checks p { margin: 0; color: var(--ink-2); }
-  .warn { margin-top: 24px; background: var(--accent-soft); border-color: transparent; }
+  /* No Aurora here: this page is read closely by wary, often older readers. */
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 var(--space-4) var(--space-16); display: grid; gap: var(--space-6); font-size: var(--text-guest); }
+  .intro { display: grid; gap: var(--space-3); padding-top: var(--space-8); }
+  .intro h1 { font-size: clamp(var(--text-h3), 7vw, var(--text-h2)); }
+  .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .checks li { display: flex; gap: var(--space-4); }
+  .checks li > .icon { width: 24px; height: 24px; color: var(--success-fg); margin-top: 2px; }
+  .checks li > div { display: grid; gap: var(--space-1); }
 </style>

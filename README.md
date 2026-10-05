@@ -22,8 +22,22 @@ The smallest build that can run the PRD's concierge test and fake-door pricing b
 - **Events are JSON files** in `src/data/events/` and are pre-rendered at build. There is no `events` table yet, so DB rows key on `event_slug`.
 - **One RSVP per person per device**, not per device. Mak can answer for Tok on her own phone ("Jawab untuk orang lain"). Each answer gets an edit token stored on that phone.
 - **Calendar:** Google Calendar link everywhere; `.ics` only on iOS, where it opens the native sheet. Android never gets a file download, keeping the "tiada muat turun" promise.
-- **Buttons are plum with white text (14.6:1); marigold is an accent fill, never text on light.** In dark mode plum would sit at 1.3:1 against the background, so primary buttons flip to marigold with plum text (7.8:1).
+- **Buttons are plum with white text (14.6:1); marigold is decoration, never text on light.** The spec's dark action (brand-400) fails at 2.95:1, so dark mode uses marigold with brand-950 text (10.0:1). See `/design` for every change to the spec.
 - **Tahlil** pages drop the marigold accent (`data-tone="muted"`).
+
+## Design system
+
+Tokens live in `src/styles/tokens.css`: the Pairwise spec's primitives verbatim, then semantic roles (`--text`, `--action-bg`, …) for light and dark. Components use roles only. `/design` documents the system from those same files. Every text pair is contrast-tested in `src/lib/tokens.test.ts`, so a token change that breaks WCAG fails `npm test`.
+
+Fonts are self-hosted (Fraunces 500, Figtree 400/600, Roboto Mono 500, Latin subset, 54 KB total).
+
+## Click-through preview
+
+```sh
+npm run preview:site   # builds preview-site/: mock API in localStorage, inlined scripts, relative links
+```
+
+`preview-site/main.html` is the hub. The bundle runs on any static host served from a sub-path. Nothing in it reaches a server.
 
 ## Stack
 

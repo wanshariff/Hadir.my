@@ -1,5 +1,6 @@
 // Guest invite behaviour. Budget: well under 60 KB; no framework.
 import { track } from './track';
+import { api } from './api';
 
 type Status = 'hadir' | 'tak_hadir';
 interface Answer { id: string; editToken: string; name: string; phone: string; status: Status; pax: number; message: string }
@@ -146,7 +147,7 @@ $<HTMLButtonElement>('[data-new]').addEventListener('click', () => { resetForm()
 
 async function send(body: unknown, method: 'POST' | 'PUT', attempt = 0): Promise<{ id: string; editToken: string }> {
   try {
-    const res = await fetch('/api/rsvp', { method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    const res = await api('/api/rsvp', { method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
     if (res.ok) return res.json();
     if (res.status < 500) throw Object.assign(new Error('rejected'), { fatal: true });
   } catch (err) {
