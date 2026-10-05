@@ -22,8 +22,8 @@ The smallest build that can run the PRD's concierge test and fake-door pricing b
 - **Events are JSON files** in `src/data/events/` and are pre-rendered at build. There is no `events` table yet, so DB rows key on `event_slug`.
 - **One RSVP per person per device**, not per device. Mak can answer for Tok on her own phone ("Jawab untuk orang lain"). Each answer gets an edit token stored on that phone.
 - **Calendar:** Google Calendar link everywhere; `.ics` only on iOS, where it opens the native sheet. Android never gets a file download, keeping the "tiada muat turun" promise.
-- **Primary buttons use ink text on coral.** White on `#FF6B4A` is 2.8:1 and fails the PRD's own 4.5:1 rule.
-- **Tahlil** pages drop the coral accent (`data-tone="muted"`).
+- **Buttons are plum with white text (14.6:1); marigold is an accent fill, never text on light.** In dark mode plum would sit at 1.3:1 against the background, so primary buttons flip to marigold with plum text (7.8:1).
+- **Tahlil** pages drop the marigold accent (`data-tone="muted"`).
 
 ## Stack
 

@@ -1,7 +1,14 @@
-/* Hadir tokens. Coral is an accent and a button fill (with ink text), never small text. */
+/* Hadir tokens (PRD: Contrast).
+   Marigold is an accent fill, never text on light backgrounds (1.8:1).
+   Buttons: plum with white text in light mode (14.6:1). Plum vanishes on the dark
+   background (1.3:1), so dark mode flips to marigold with plum text (7.8:1). */
 :root {
-  --coral: #ff6b4a;
-  --coral-soft: #ffe4dc;
+  --plum: #3b1e3f;
+  --marigold: #f4b23e;
+  --accent: var(--marigold);
+  --accent-soft: #fdf0d6;
+  --btn-bg: var(--plum);
+  --btn-fg: #ffffff;
   --ink: #1f1a17;
   --ink-2: #5c524c;
   --paper: #fffaf6;
@@ -21,13 +28,15 @@
 
 /* Tahlil: no celebratory accent. */
 [data-tone='muted'] {
-  --coral: #c9bfb8;
-  --coral-soft: #f1ece8;
+  --accent: #c9bfb8;
+  --accent-soft: #f1ece8;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --coral-soft: #3a2620;
+    --accent-soft: #3a2e1a;
+    --btn-bg: var(--marigold);
+    --btn-fg: var(--plum);
     --ink: #f5efeb;
     --ink-2: #c4b8b0;
     --paper: #171311;
@@ -39,7 +48,7 @@
     --focus: #f5efeb;
     color-scheme: dark;
   }
-  [data-tone='muted'] { --coral: #8f857e; --coral-soft: #2c2522; }
+  [data-tone='muted'] { --accent: #8f857e; --accent-soft: #2c2522; }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -70,7 +79,7 @@ a { color: inherit; text-underline-offset: 3px; }
   transition: background-color 150ms, border-color 150ms, transform 150ms;
 }
 .btn:active { transform: scale(0.98); }
-.btn-primary { background: var(--coral); border-color: var(--coral); color: #1f1a17; }
+.btn-primary { background: var(--btn-bg); border-color: var(--btn-bg); color: var(--btn-fg); }
 .btn-block { width: 100%; }
 .btn[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 
