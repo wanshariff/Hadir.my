@@ -1,0 +1,19 @@
+{
+  "slug": "aisyah-7",
+  "type": "hari_jadi",
+  "lang": "bm",
+  "hostNames": "Aisyah, 7 tahun",
+  "hostedBy": "Mama & Papa Aisyah",
+  "startsAt": "2026-11-14T15:00:00+08:00",
+  "endsAt": "2026-11-14T18:00:00+08:00",
+  "venue": {
+    "name": "Dewan Komuniti Presint 9 (contoh)",
+    "address": "Jalan P9E, Presint 9, 62250 Putrajaya",
+    "lat": 2.9136,
+    "lng": 101.683
+  },
+  "rsvpBy": "2026-11-07",
+  "maxPax": 6,
+  "note": "Tema: taman bunga. Ada aktiviti mewarna untuk kanak-kanak.",
+  "hostKeyHash": "7ac7b037ddb2a25e7cd245605d602f2e2acc377d03ba2e38181702b53b483d8a"
+}

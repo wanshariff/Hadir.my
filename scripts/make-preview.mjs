@@ -2,26 +2,22 @@
 // that runs inside a sandboxed host serving files from a sub-path:
 //  - each page's module script is bundled to one inline IIFE (no cross-file imports),
 //  - root-absolute URLs become relative (the site isn't served at /),
-//  - the hub (/preview) becomes main.html with no document skeleton, for hosts that wrap the main page.
+//  - the home page is index.html, and again as main.html with no document skeleton for hosts that wrap the main page.
 import { build } from 'esbuild';
-import { mkdirSync, readFileSync, rmSync, writeFileSync, copyFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync, copyFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 const SRC = 'dist-preview';
 const OUT = 'preview-site';
 
-// source html -> published path
-const PAGES = {
-  'preview.html': 'main.html',
-  'index.html': 'home.html',
-  'sofea-adam.html': 'sofea-adam.html',
-  'h/sofea-adam.html': 'h/sofea-adam.html',
-  'harga.html': 'harga.html',
-  'selamat.html': 'selamat.html',
-  'design.html': 'design.html',
-};
-const ROUTES = { '/': 'home.html', '/preview': '' };
-const STATIC = ['favicon.svg', 'sofea-adam.ics'];
+// Every built page keeps its path. The home page is the root (index.html); the screen directory is preview.html.
+function htmlFiles(dir, base = '') {
+  return readdirSync(join(dir, base), { withFileTypes: true }).flatMap((d) =>
+    d.isDirectory() ? htmlFiles(dir, join(base, d.name)) : d.name.endsWith('.html') ? [join(base, d.name)] : []);
+}
+const PAGES = Object.fromEntries(htmlFiles(SRC).map((f) => [f, f]));
+const ROUTES = { '/': 'index.html', '/preview': 'preview.html' };
+const STATIC = ['favicon.svg', ...readdirSync(SRC).filter((f) => f.endsWith('.ics'))];
 
 function mapPath(abs) {
   const [path, rest = ''] = abs.split(/(?=[?#])/);
@@ -64,10 +60,9 @@ for (const [src, dest] of Object.entries(PAGES)) {
   html = await inlineScripts(html);
   html = relativise(html, dest);
   mkdirSync(dirname(join(OUT, dest)), { recursive: true });
-  // The hub ships twice: index.html as a full document (GitHub Pages and other static hosts),
-  // main.html without a skeleton (hosts that wrap the main page themselves).
-  if (dest === 'main.html') writeFileSync(join(OUT, 'index.html'), html);
-  writeFileSync(join(OUT, dest), dest === 'main.html' ? stripSkeleton(html) : html);
+  writeFileSync(join(OUT, dest), html);
+  // Hosts that wrap the main page themselves get the home page without its document skeleton.
+  if (dest === 'index.html') writeFileSync(join(OUT, 'main.html'), stripSkeleton(html));
 }
 for (const f of STATIC) if (existsSync(join(SRC, f))) copyFileSync(join(SRC, f), join(OUT, f));
 writeFileSync(join(OUT, '.nojekyll'), ''); // serve files as-is on GitHub Pages

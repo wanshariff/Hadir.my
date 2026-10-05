@@ -1,0 +1,19 @@
+{
+  "slug": "tahlil-haji-ismail",
+  "type": "tahlil",
+  "lang": "bm",
+  "hostNames": "Allahyarham Haji Ismail bin Daud",
+  "hostedBy": "Keluarga Haji Ismail",
+  "startsAt": "2026-10-23T20:30:00+08:00",
+  "endsAt": "2026-10-23T22:00:00+08:00",
+  "venue": {
+    "name": "Surau Al-Hidayah (contoh)",
+    "address": "Jalan Melawati 2, Taman Melawati, 53100 Kuala Lumpur",
+    "lat": 3.2135,
+    "lng": 101.752
+  },
+  "rsvpBy": "2026-10-21",
+  "maxPax": 6,
+  "note": "Selepas solat Isyak. Jamuan ringan disediakan.",
+  "hostKeyHash": "b8c38123db728d0ad7787770b95c8636db6aef5be9d2016f4440690d7c596724"
+}

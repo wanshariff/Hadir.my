@@ -1,0 +1,47 @@
+---
+// Marketing footer. Links only to pages that exist; legal pages are added when their text is approved.
+const cols = [
+  { title: 'Produk', links: [['Contoh kad', '/kad'], ['Kawal Tetamu', '/#kawal-tetamu'], ['Cari gaya kad', '/pilih'], ['Harga', '/harga']] },
+  { title: 'Bantuan', links: [['Cara semak pautan', '/selamat'], ['Soalan lazim', '/#soalan']] },
+  { title: 'Jenis majlis', links: [['Kahwin', '/kad#kahwin'], ['Aqiqah', '/kad#aqiqah'], ['Rumah terbuka', '/kad#rumah_terbuka'], ['Tahlil', '/kad#tahlil'], ['Hari jadi', '/kad#hari_jadi']] },
+];
+---
+<footer class="site-footer">
+  <div class="inner">
+    <div class="brand">
+      <p class="wordmark">hadir.my</p>
+      <p class="muted">Kad jemputan digital dan senarai tetamu yang sebenar. Pautan web, tiada muat turun.</p>
+    </div>
+    {cols.map((c) => (
+      <nav aria-label={c.title} class="col">
+        <p class="eyebrow-label">{c.title}</p>
+        <ul>{c.links.map(([label, href]) => <li><a href={href}>{label}</a></li>)}</ul>
+      </nav>
+    ))}
+  </div>
+  <div class="legal">
+    <p>© 2026 Hadir · Dibuat di Malaysia</p>
+    <a href="/design">Sistem reka bentuk</a>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--border); background: var(--surface-sunken); margin-top: var(--space-16); }
+  .inner {
+    max-width: 1080px; margin: 0 auto; padding: var(--space-10) var(--space-4) var(--space-8);
+    display: grid; gap: var(--space-8); grid-template-columns: 1fr 1fr;
+  }
+  .brand { grid-column: 1 / -1; display: grid; gap: var(--space-2); max-width: 32ch; }
+  @media (min-width: 760px) { .inner { grid-template-columns: 1.6fr 1fr 1fr 1fr; } .brand { grid-column: auto; } }
+  .wordmark { font: var(--weight-display) var(--text-h4)/1 var(--font-display); letter-spacing: var(--tracking-display); }
+  .col { display: grid; gap: var(--space-2); align-content: start; }
+  .col ul { list-style: none; padding: 0; margin: 0; display: grid; }
+  .col a { display: inline-flex; align-items: center; min-height: 40px; color: var(--text); text-decoration: none; }
+  .col a:hover { text-decoration: underline; }
+  .legal {
+    max-width: 1080px; margin: 0 auto; padding: var(--space-4) var(--space-4) var(--space-8);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3);
+    border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.875rem;
+  }
+  .legal a { color: var(--text-muted); }
+</style>

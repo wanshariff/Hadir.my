@@ -5,9 +5,12 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 
 const screens = [
+  { href: '/', icon: 'house', title: 'Laman utama', who: 'Bakal tuan rumah', body: 'The landing page: hero, before and after, Kawal Tetamu demo, event types, pricing, FAQ.' },
   { href: '/sofea-adam', icon: 'mail-open', title: 'Kad jemputan tetamu', who: 'Tetamu', body: 'What a guest sees from a WhatsApp forward. Try the RSVP, then "Jawab untuk orang lain".' },
   { href: '/h/sofea-adam', icon: 'users', title: 'Papan pemuka tuan rumah', who: 'Tuan rumah', body: 'Headcount and the response list. Your RSVPs from the invite show up here, alongside 3 example replies.' },
-  { href: '/', icon: 'house', title: 'Laman utama', who: 'Bakal tuan rumah', body: 'Where "Buat kad anda" on every invite lands. Collects early hosts while the editor is being built.' },
+  { href: '/pilih', icon: 'sparkles', title: 'Cari gaya kad', who: 'Bakal tuan rumah', body: 'The taste quiz: one colour question, 5 decor scenes, up to 7 card details, then 3 matches with your names.' },
+  { href: '/kad', icon: 'layout-grid', title: 'Contoh kad', who: 'Bakal tuan rumah', body: 'One live example per event type, tahlil in its muted tone.' },
+  { href: '/mula', icon: 'pen-line', title: 'Buat kad', who: 'Bakal tuan rumah', body: 'Where every "Buat kad" leads: early access while the editor is built.' },
   { href: '/harga', icon: 'tag', title: 'Harga', who: 'Bakal tuan rumah', body: 'Fake-door test for Kawal Tetamu at RM29, RM35 or RM39.' },
   { href: '/selamat', icon: 'shield-check', title: 'Cara semak pautan', who: 'Tetamu', body: 'How to tell a real Hadir invite from an APK scam.' },
   { href: '/design', icon: 'palette', title: 'Design system', who: 'Pasukan', body: 'Tokens, contrast checks, type, Aurora rules and every component in use.' },
@@ -18,7 +21,7 @@ const screens = [
     <header class="hub-head">
       <p class="badge">Pratonton · 5 Okt 2026</p>
       <h1>Hadir, validation slice</h1>
-      <p class="lede">Six screens from the concierge build. Everything works; answers are stored in this browser only, so nothing you type reaches a server.</p>
+      <p class="lede">Every screen of the concierge build. Everything works; answers are stored in this browser only, so nothing you type reaches a server.</p>
     </header>
     <ul class="screens">
       {screens.map((s) => (

@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import MiniInvite from '../components/MiniInvite.astro';
+import { events, type EventType } from '../lib/events';
+
+// PRD route /kad (Contoh): a live example per event type, each opening as a real guest view.
+const TYPES: { type: EventType; title: string; body: string }[] = [
+  { type: 'kahwin', title: 'Kahwin', body: 'Walimatul urus, bersanding atau majlis sebelah pihak.' },
+  { type: 'aqiqah', title: 'Aqiqah', body: 'Aqiqah dan cukur jambul, biasanya di rumah.' },
+  { type: 'rumah_terbuka', title: 'Rumah terbuka', body: 'Raya atau majlis keluarga, tetamu datang ikut masa.' },
+  { type: 'tahlil', title: 'Tahlil', body: 'Reka bentuk tenang, tanpa hiasan meraikan.' },
+  { type: 'hari_jadi', title: 'Hari jadi', body: 'Untuk kanak-kanak atau dewasa.' },
+];
+const items = TYPES.map((t) => ({ ...t, event: events.find((e) => e.type === t.type) })).filter((t) => t.event);
+---
+<Base title="Contoh kad · Hadir" description="Contoh kad jemputan Hadir untuk kahwin, aqiqah, rumah terbuka, tahlil dan hari jadi.">
+  <SiteHeader current="kad" />
+  <main class="wrap">
+    <section class="intro">
+      <h1>Contoh kad</h1>
+      <p class="lede muted">Setiap contoh dibuka seperti yang tetamu lihat dari WhatsApp. Cuba jawab RSVP; tiada apa yang dihantar.</p>
+    </section>
+    <ul class="gallery">
+      {items.map((t) => (
+        <li id={t.type} class="item">
+          <MiniInvite event={t.event!} />
+          <div class="caption">
+            <h2 class="h5">{t.title}</h2>
+            <p class="muted">{t.body}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+    <section class="panel panel-solid cta">
+      <div>
+        <h2 class="h5">Sedia untuk majlis anda?</h2>
+        <p class="muted">Percuma untuk semua jenis majlis.</p>
+      </div>
+      <a class="btn btn-primary" href="/pilih">Buat kad percuma</a>
+    </section>
+  </main>
+  <SiteFooter />
+</Base>
+
+<style>
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--space-4); display: grid; gap: var(--space-8); }
+  .intro { display: grid; gap: var(--space-3); padding-top: var(--space-10); max-width: 36em; }
+  .intro h1 { font-size: clamp(var(--text-h3), 7vw, var(--text-h1)); }
+  .lede { font-size: var(--text-h5); }
+  .gallery { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-6); grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); }
+  .item { display: grid; gap: var(--space-3); align-content: start; scroll-margin-top: 96px; }
+  .item > :global(.mini) { min-height: 100%; }
+  .caption { display: grid; gap: 2px; }
+  .cta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-4); padding: var(--space-6); }
+</style>

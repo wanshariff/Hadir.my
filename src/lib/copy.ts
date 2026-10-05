@@ -15,8 +15,8 @@ export const eventCopy: Record<EventType, Record<Lang, { title: string; intro: s
     en: { title: 'Open House', intro: 'Please join us for an open house with' },
   },
   tahlil: {
-    bm: { title: 'Majlis Tahlil', intro: 'Kami menjemput anda ke majlis tahlil dan doa selamat' },
-    en: { title: 'Tahlil', intro: 'We invite you to a tahlil and prayer gathering' },
+    bm: { title: 'Majlis Tahlil', intro: 'Kami menjemput anda ke majlis tahlil dan doa untuk arwah' },
+    en: { title: 'Tahlil', intro: 'We invite you to a tahlil and prayers for the late' },
   },
   hari_jadi: {
     bm: { title: 'Majlis Hari Jadi', intro: 'Jom raikan hari jadi' },

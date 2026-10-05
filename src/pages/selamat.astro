@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 
 const checks = [
   { icon: 'globe', title: 'Pautan bermula dengan hadir.my', body: 'Kad Hadir yang sebenar sentiasa di hadir.my/nama-majlis. Tiada pautan pendek, tiada subdomain pelik.' },
@@ -27,11 +28,12 @@ const checks = [
     </ul>
     <p class="alert alert-warning"><Icon name="triangle-alert" /><span><strong>Ragu-ragu?</strong> Tanya terus kepada orang yang menjemput anda sebelum membuka apa-apa pautan.</span></p>
   </main>
+  <SiteFooter />
 </Base>
 
 <style>
   /* No Aurora here: this page is read closely by wary, often older readers. */
-  .wrap { max-width: 640px; margin: 0 auto; padding: 0 var(--space-4) var(--space-16); display: grid; gap: var(--space-6); font-size: var(--text-guest); }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 var(--space-4); display: grid; gap: var(--space-6); font-size: var(--text-guest); }
   .intro { display: grid; gap: var(--space-3); padding-top: var(--space-8); }
   .intro h1 { font-size: clamp(var(--text-h3), 7vw, var(--text-h2)); }
   .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }

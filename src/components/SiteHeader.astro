@@ -1,37 +1,85 @@
 ---
-// Marketing app bar. The guest invite and host dashboard don't use it: guests should see only the invite.
-interface Props { current?: 'home' | 'harga' | 'selamat' | 'design' }
+// Marketing app bar: wordmark, three destinations, one primary action. Sticky so "Buat kad" is always one tap away.
+// The guest invite and host dashboard don't use it: guests should see only the invite.
+import Icon from './Icon.astro';
+
+interface Props { current?: 'home' | 'kad' | 'harga' | 'selamat' | 'mula' | 'pilih' | 'design' }
 const { current } = Astro.props;
 const links = [
+  { href: '/kad', label: 'Contoh kad', key: 'kad' },
   { href: '/harga', label: 'Harga', key: 'harga' },
   { href: '/selamat', label: 'Semak pautan', key: 'selamat' },
 ];
 ---
 <header class="site-header">
-  <a class="wordmark" href="/" aria-current={current === 'home' ? 'page' : undefined}>
-    <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--color-brand-500)" /><path d="M10 16.5l4 4 8-9" fill="none" stroke="var(--color-secondary-500)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
-    hadir.my
-  </a>
-  <nav aria-label="Utama">
-    {links.map((l) => <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>{l.label}</a>)}
+  <div class="bar">
+    <a class="wordmark" href="/" aria-current={current === 'home' ? 'page' : undefined}>
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--color-brand-500)" /><path d="M10 16.5l4 4 8-9" fill="none" stroke="var(--color-secondary-500)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      hadir.my
+    </a>
+    <nav class="nav-wide" aria-label="Utama">
+      {links.map((l) => <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>{l.label}</a>)}
+    </nav>
+    <div class="end">
+      {current !== 'mula' && current !== 'pilih' && <a class="btn btn-primary cta" href="/pilih">Buat kad</a>}
+      <button class="btn btn-icon btn-ghost menu-btn" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Menu">
+        <span class="i-open"><Icon name="menu" /></span><span class="i-close" hidden><Icon name="x" /></span>
+      </button>
+    </div>
+  </div>
+  <nav class="nav-narrow" id="site-menu" aria-label="Utama" hidden>
+    {links.map((l) => <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>{l.label}<Icon name="chevron-right" /></a>)}
   </nav>
 </header>
 
+<script is:inline>
+  (function () {
+    var btn = document.querySelector('.menu-btn'), menu = document.getElementById('site-menu');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      menu.hidden = open;
+      btn.closest('.site-header').classList.toggle('is-open', !open);
+      btn.querySelector('.i-open').hidden = !open;
+      btn.querySelector('.i-close').hidden = open;
+    });
+  })();
+</script>
+
 <style>
   .site-header {
-    max-width: 960px; margin: 0 auto; padding: var(--space-3) var(--space-4);
-    display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 30;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+  }
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .site-header { -webkit-backdrop-filter: blur(var(--blur-surface)); backdrop-filter: blur(var(--blur-surface)); }
+  }
+  .bar {
+    max-width: 1080px; margin: 0 auto; padding: var(--space-2) var(--space-4);
+    display: flex; align-items: center; gap: var(--space-4);
   }
   .wordmark {
     display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target-min);
-    color: var(--text); text-decoration: none;
+    color: var(--text); text-decoration: none; margin-right: auto;
     font: var(--weight-display) var(--text-h5)/1 var(--font-display); letter-spacing: var(--tracking-display);
   }
   .wordmark svg { width: 28px; height: 28px; }
-  nav { display: flex; gap: var(--space-1); }
-  nav a {
-    display: inline-flex; align-items: center; min-height: var(--target-min); padding: 0 var(--space-3);
-    color: var(--text); text-decoration: none; font-weight: var(--weight-body-strong); border-radius: var(--radius-sm);
-  }
+  .nav-wide { display: none; gap: var(--space-1); }
+  .nav-wide a, .nav-narrow a { color: var(--text); text-decoration: none; font-weight: var(--weight-body-strong); border-radius: var(--radius-sm); }
+  .nav-wide a { display: inline-flex; align-items: center; min-height: var(--target-min); padding: 0 var(--space-3); }
+  .nav-wide a:hover { background: var(--surface-sunken); }
   nav a[aria-current='page'] { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; text-decoration-color: var(--accent); }
+  .end { display: flex; align-items: center; gap: var(--space-2); }
+  .cta { padding: 0 var(--space-4); }
+  .nav-narrow { display: grid; padding: 0 var(--space-4) var(--space-3); max-width: 1080px; margin: 0 auto; }
+  .nav-narrow a { display: flex; justify-content: space-between; align-items: center; min-height: 52px; padding: 0 var(--space-2); border-top: 1px solid var(--border); border-radius: 0; }
+  .site-header.is-open { background: var(--surface-solid); }
+  .nav-narrow .icon { color: var(--text-muted); }
+  @media (min-width: 760px) {
+    .nav-wide { display: flex; }
+    .menu-btn, .nav-narrow { display: none !important; }
+    .wordmark { margin-right: var(--space-4); }
+    .nav-wide { margin-right: auto; }
+  }
 </style>
