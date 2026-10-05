@@ -1,0 +1,143 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { THEME_COLOURS } from '../lib/styles';
+import '../styles/templates.css';
+
+// PRD v0.2 P0 Taste quiz (Q1–Q6): one colour question, 5 decor scenes, up to 7 card details,
+// then 3 matches filled with the couple's names. Scenes and cards are drawn sketches until the image bank exists.
+---
+<Base title="Cari gaya kad · Hadir" description="Satu soalan dan 12 leretan. Kami cadangkan 3 reka bentuk kad dengan nama anda.">
+  <SiteHeader current="pilih" />
+  <main class="quiz" data-quiz>
+    <a href="/mula" data-mula-link hidden tabindex="-1" aria-hidden="true"></a>
+    <div class="progress" hidden>
+      <div class="bar" role="progressbar" aria-label="Kemajuan kuiz" aria-valuemin="0" aria-valuemax="13" aria-valuenow="0"><span></span></div>
+      <p class="count small"><span data-count>0</span> / <span data-total>13</span></p>
+    </div>
+
+    <!-- Intro -->
+    <section class="step" data-step="intro" aria-labelledby="q-intro">
+      <span class="badge">Percuma · 2 minit</span>
+      <h1 id="q-intro">Cari gaya kad anda</h1>
+      <p class="lede muted">Satu soalan dan 12 leretan. Kami cadangkan 3 reka bentuk, siap dengan nama anda.</p>
+      <form class="panel panel-solid names" novalidate>
+        <div class="pair">
+          <div class="field"><label for="n1">Nama anda</label><input id="n1" autocomplete="given-name" maxlength="24" placeholder="" /></div>
+          <div class="field"><label for="n2">Nama pasangan</label><input id="n2" maxlength="24" /></div>
+        </div>
+        <p class="hint">Pilihan. Jika kosong, kami guna nama contoh.</p>
+        <button class="btn btn-primary btn-block" type="submit">Mula</button>
+      </form>
+      <p class="hint">Tiada akaun diperlukan. <a href="#" data-skip>Langkau, terus lihat semua gaya</a></p>
+    </section>
+
+    <!-- Phase 0: theme colour -->
+    <section class="step" data-step="colour" hidden aria-labelledby="q-colour">
+      <h1 id="q-colour" class="q-title">Dah ada tema warna?</h1>
+      <div class="choice">
+        <button class="btn" type="button" data-colour-yes aria-pressed="false">Ya, sudah</button>
+        <button class="btn" type="button" data-colour-no>Belum lagi</button>
+      </div>
+      <fieldset class="swatches" hidden>
+        <legend class="field-label">Pilih warna tema</legend>
+        <div class="swatch-grid">
+          {THEME_COLOURS.map((c) => (
+            <label class="swatch">
+              <input type="radio" name="colour" value={c.id} data-hex={c.hex} />
+              <span class="dot" style={`background:${c.hex}`}></span>
+              <span>{c.label}</span>
+            </label>
+          ))}
+        </div>
+        <button class="btn btn-primary btn-block" type="button" data-colour-go disabled>Teruskan</button>
+      </fieldset>
+    </section>
+
+    <!-- Phases 1 and 2: one card at a time -->
+    <section class="step" data-step="swipe" hidden aria-labelledby="q-swipe">
+      <h1 id="q-swipe" class="q-title" data-swipe-title>Suka suasana ini?</h1>
+      <div class="card-stage">
+        <div class="swipe-card" data-card tabindex="-1"></div>
+      </div>
+      <p class="caption muted" data-caption aria-live="polite"></p>
+      <div class="answers">
+        <button class="btn answer" type="button" data-answer="-1"><Icon name="x" />Tak suka</button>
+        <button class="btn btn-primary answer" type="button" data-answer="1"><Icon name="heart" />Suka</button>
+      </div>
+      <p class="hint center">Leret ke kanan untuk suka, ke kiri untuk tak suka.</p>
+    </section>
+
+    <!-- Edge case: disliked every scene -->
+    <section class="step" data-step="ask" hidden aria-labelledby="q-ask">
+      <h1 id="q-ask" class="q-title">Tiada yang kena? Satu soalan lagi.</h1>
+      <p class="muted">Anda lebih suka yang mana?</p>
+      <div class="choice">
+        <button class="btn" type="button" data-lean="klasik">Klasik</button>
+        <button class="btn" type="button" data-lean="moden">Moden</button>
+      </div>
+    </section>
+
+    <!-- Result -->
+    <section class="step result" data-step="result" hidden aria-labelledby="q-result">
+      <p class="eyebrow-label">Gaya majlis anda</p>
+      <h1 id="q-result" data-result-name></h1>
+      <p class="muted" data-result-mood></p>
+      <ol class="matches" data-matches></ol>
+      <div class="result-actions">
+        <button class="btn" type="button" data-share><Icon name="share-2" />Kongsi keputusan</button>
+        <button class="btn btn-ghost" type="button" data-restart><Icon name="rotate-ccw" />Ulang kuiz</button>
+      </div>
+      <p class="hint" role="status" aria-live="polite" data-share-msg></p>
+      <p class="alert alert-info"><Icon name="info" /><span>Reka bentuk ini lakaran awal. Semua reka bentuk percuma; anda hanya bayar jika perlu kawal tetamu.</span></p>
+    </section>
+  </main>
+
+  <script src="../scripts/pilih.ts"></script>
+</Base>
+
+<style>
+  .quiz { max-width: 560px; margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-16); display: grid; gap: var(--space-5); }
+  .progress { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; }
+  .bar { height: 6px; border-radius: 999px; background: var(--surface-sunken); overflow: hidden; }
+  .bar span { display: block; height: 100%; width: 0; background: var(--action-bg); border-radius: inherit; transition: width var(--motion-base); }
+  .count { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .step { display: grid; gap: var(--space-5); }
+  [data-step='swipe'] { gap: var(--space-3); }
+  .step h1 { font-size: clamp(var(--text-h3), 8vw, var(--text-h2)); }
+  .q-title { font-size: var(--text-h3) !important; }
+  .lede { font-size: var(--text-h5); }
+  .names { display: grid; gap: var(--space-4); padding: var(--space-5); }
+  .pair { display: grid; gap: var(--space-4); }
+  @media (min-width: 480px) { .pair { grid-template-columns: 1fr 1fr; } }
+  .choice { display: grid; gap: var(--space-2); }
+  .choice .btn { min-height: 56px; font-size: var(--text-h5); }
+  .swatches { border: 0; padding: 0; margin: 0; display: grid; gap: var(--space-4); }
+  .swatch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
+  .swatch { display: grid; justify-items: center; gap: var(--space-1); padding: var(--space-2); border-radius: var(--radius-md); border: 1.5px solid var(--border); cursor: pointer; font-size: 0.8125rem; text-align: center; font-weight: 400; }
+  .swatch input { position: absolute; opacity: 0; pointer-events: none; }
+  .swatch .dot { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-control); }
+  .swatch:has(input:checked) { border-color: var(--action-bg); background: var(--surface-sunken); font-weight: 600; }
+  .swatch:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .card-stage { display: grid; place-items: center; touch-action: pan-y; }
+  /* Sized by height too, so the answer buttons stay on screen without scrolling. */
+  .swipe-card { width: min(100%, 360px, calc((100dvh - 400px) * 0.8)); transition: transform var(--motion-base), opacity var(--motion-base); will-change: transform; }
+  .swipe-card.out-left { transform: translateX(-30%) rotate(-6deg); opacity: 0; }
+  .swipe-card.out-right { transform: translateX(30%) rotate(6deg); opacity: 0; }
+  .caption { text-align: center; min-height: 3em; }
+  .answers { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+  .answer { min-height: 56px; font-size: var(--text-h5); }
+  .center { text-align: center; }
+  .result h1 { font-size: clamp(var(--text-h3), 9vw, var(--text-h1)); }
+  .matches { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-6); }
+  .result-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+</style>
+
+<style is:global>
+  /* Rendered by pilih.ts. */
+  .match { display: grid; gap: var(--space-3); }
+  .match-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+  .match .tpl { max-width: 360px; justify-self: center; }
+  .scene-caption { display: block; }
+</style>

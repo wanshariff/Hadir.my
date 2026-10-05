@@ -3,7 +3,7 @@
 // The guest invite and host dashboard don't use it: guests should see only the invite.
 import Icon from './Icon.astro';
 
-interface Props { current?: 'home' | 'kad' | 'harga' | 'selamat' | 'mula' | 'design' }
+interface Props { current?: 'home' | 'kad' | 'harga' | 'selamat' | 'mula' | 'pilih' | 'design' }
 const { current } = Astro.props;
 const links = [
   { href: '/kad', label: 'Contoh kad', key: 'kad' },
@@ -21,7 +21,7 @@ const links = [
       {links.map((l) => <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>{l.label}</a>)}
     </nav>
     <div class="end">
-      {current !== 'mula' && <a class="btn btn-primary cta" href="/mula">Buat kad</a>}
+      {current !== 'mula' && current !== 'pilih' && <a class="btn btn-primary cta" href="/pilih">Buat kad</a>}
       <button class="btn btn-icon btn-ghost menu-btn" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Menu">
         <span class="i-open"><Icon name="menu" /></span><span class="i-close" hidden><Icon name="x" /></span>
       </button>

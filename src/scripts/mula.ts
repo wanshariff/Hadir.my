@@ -1,8 +1,16 @@
 import { track } from './track';
 import { api } from './api';
+import { FAMILIES } from '../lib/styles';
 
 // Guests who tapped "Buat kad anda" on an invite carry ?ref=<slug> through to here.
-const ref = new URLSearchParams(location.search).get('ref');
+const params = new URLSearchParams(location.search);
+const ref = params.get('ref');
+// The style the couple picked in the taste quiz, if they came from it.
+const gaya = FAMILIES.find((f) => f.id === params.get('gaya'));
+if (gaya) {
+  document.querySelector<HTMLElement>('[data-gaya-name]')!.textContent = gaya.name;
+  document.querySelector<HTMLElement>('[data-gaya]')!.hidden = false;
+}
 
 const form = document.querySelector<HTMLFormElement>('form.join')!;
 const email = form.querySelector<HTMLInputElement>('#j-email')!;
@@ -30,10 +38,10 @@ form.addEventListener('submit', async (e) => {
     const res = await api('/api/waitlist', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email: email.value.trim(), eventMonth: month.value || null, source: `${ref ? `invite:${ref}` : 'mula'}:${type.value}` }),
+      body: JSON.stringify({ email: email.value.trim(), eventMonth: month.value || null, source: `${ref ? `invite:${ref}` : 'mula'}:${type.value}${gaya ? `:gaya-${gaya.id}` : ''}` }),
     });
     if (!res.ok) throw new Error(String(res.status));
-    track('waitlist_joined', { source: ref ? 'invite' : 'mula', type: type.value });
+    track('waitlist_joined', { source: ref ? 'invite' : 'mula', type: type.value, gaya: gaya?.id ?? '' });
     status.textContent = 'Terima kasih. Kami akan hubungi anda dalam 2 hari bekerja.';
     btn.hidden = true;
   } catch {

@@ -5,6 +5,8 @@ import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import MiniInvite from '../components/MiniInvite.astro';
 import { events, getEvent } from '../lib/events';
+import { FAMILIES } from '../lib/styles';
+import '../styles/templates.css';
 
 // The front door (PRD: self-promoting marketing site). Section order follows the PRD's home page spec.
 // Guests arriving from an invite footer carry ?utm_source=invite&ref=<slug>.
@@ -28,10 +30,10 @@ const pending = sides.reduce((a, s) => a + s.of - s.n, 0);
           <h1>Tahu siapa yang datang.</h1>
           <p class="lede">Kad jemputan digital yang tetamu jawab dengan sekali tekan, dan jumlah sebenar untuk katerer anda.</p>
           <div class="ctas">
-            <a class="btn btn-primary" href="/mula">Buat kad percuma</a>
+            <a class="btn btn-primary" href="/pilih">Buat kad percuma</a>
             <a class="btn" href="/kad">Lihat contoh kad</a>
           </div>
-          <p class="hint">Percuma untuk semua jenis majlis. Bayar sekali hanya jika perlu kawal tetamu.</p>
+          <p class="hint">Mula dengan kuiz gaya 2 minit. Percuma; bayar hanya jika perlu kawal tetamu.</p>
         </div>
         <div class="phone" aria-label="Contoh kad jemputan">
           <div class="phone-screen"><MiniInvite event={hero} size="phone" label="Contoh kad: Sofea dan Adam. Buka kad" /></div>
@@ -45,6 +47,30 @@ const pending = sides.reduce((a, s) => a + s.of - s.n, 0);
         <li><Icon name="globe" /><span><strong>Pautan web</strong><span class="muted">Dibuka terus di pelayar, di hadir.my.</span></span></li>
         <li><Icon name="file-x" /><span><strong>Tiada muat turun</strong><span class="muted">Tiada fail APK, tiada aplikasi.</span></span></li>
         <li><Icon name="lock" /><span><strong>Data milik anda</strong><span class="muted">Nombor telefon tetamu hanya untuk tuan rumah.</span></span></li>
+      </ul>
+    </section>
+
+    <!-- Taste quiz -->
+    <section class="wrap sec" aria-labelledby="gaya-h">
+      <div class="sec-head row-head">
+        <div>
+          <h2 id="gaya-h">Tak tahu nak pilih reka bentuk?</h2>
+          <p class="muted">Satu soalan dan 12 leretan. Kami cadangkan 3 reka bentuk, siap dengan nama anda, untuk dikongsi dengan keluarga.</p>
+        </div>
+        <a class="btn btn-primary" href="/pilih">Cuba kuiz gaya</a>
+      </div>
+      <ul class="families">
+        {FAMILIES.map((f) => (
+          <li>
+            <div class={`tpl tpl-${f.id}`} role="img" aria-label={`Contoh kad gaya ${f.name}`}>
+              <span class="tpl-photo">Foto</span>
+              <p class="tpl-pre">Walimatul Urus</p>
+              <p class="tpl-names">Aisyah &amp; Hakim</p>
+              <p class="tpl-date">12 Disember 2026</p>
+            </div>
+            <p class="fam-name">{f.name}</p>
+          </li>
+        ))}
       </ul>
     </section>
 
@@ -88,7 +114,7 @@ const pending = sides.reduce((a, s) => a + s.of - s.n, 0);
     <section class="wrap sec" aria-labelledby="how-h">
       <div class="sec-head"><h2 id="how-h">Tiga langkah</h2></div>
       <ol class="steps">
-        <li class="panel panel-solid"><span class="step-n figure">1</span><h3 class="h5">Reka</h3><p class="muted">Pilih jenis majlis, isi tarikh dan tempat. Siap dalam 5 minit di telefon.</p></li>
+        <li class="panel panel-solid"><span class="step-n figure">1</span><h3 class="h5">Reka</h3><p class="muted">Jawab kuiz gaya, pilih satu daripada 3 reka bentuk, isi tarikh dan tempat. Siap dalam 5 minit di telefon.</p></li>
         <li class="panel panel-solid"><span class="step-n figure">2</span><h3 class="h5">Kongsi</h3><p class="muted">Hantar di WhatsApp. Pratonton pautan sudah tunjuk nama, tarikh dan tempat.</p></li>
         <li class="panel panel-solid"><span class="step-n figure">3</span><h3 class="h5">Kira</h3><p class="muted">Tetamu jawab sekali tekan. Anda nampak jumlahnya, dikemas kini setiap 10 saat.</p></li>
       </ol>
@@ -173,7 +199,7 @@ const pending = sides.reduce((a, s) => a + s.of - s.n, 0);
     <section class="wrap">
       <div class="final aurora">
         <h2>Majlis seterusnya, tanpa meneka.</h2>
-        <a class="btn btn-primary" href="/mula">Buat kad percuma</a>
+        <a class="btn btn-primary" href="/pilih">Buat kad percuma</a>
       </div>
     </section>
   </main>
@@ -213,6 +239,16 @@ const pending = sides.reduce((a, s) => a + s.of - s.n, 0);
   .trust-list li { display: flex; gap: var(--space-3); align-items: flex-start; }
   .trust-list .icon { color: var(--success-fg); margin-top: 2px; }
   .trust-list li > span { display: grid; }
+
+  /* Style families */
+  .families {
+    list-style: none; padding: 0 0 var(--space-2); margin: 0;
+    display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr); gap: var(--space-3);
+    overflow-x: auto; scroll-snap-type: x mandatory;
+  }
+  .families li { scroll-snap-align: start; display: grid; gap: var(--space-2); }
+  .fam-name { font-weight: var(--weight-body-strong); text-align: center; }
+  @media (min-width: 960px) { .families { grid-auto-flow: row; grid-template-columns: repeat(5, 1fr); overflow: visible; } }
 
   /* Before / after */
   .ba-switch { display: flex; gap: var(--space-2); }

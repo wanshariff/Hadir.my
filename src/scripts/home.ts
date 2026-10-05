@@ -24,7 +24,7 @@ document.querySelectorAll<HTMLButtonElement>('[data-cap-step]').forEach((b) => b
 
 // Carry the invite that sent this visitor through to sign-up, so the waitlist records it (PRD: invite as ad).
 const ref = params.get('ref');
-document.querySelectorAll<HTMLAnchorElement>('a[href*="mula"]').forEach((a) => {
+document.querySelectorAll<HTMLAnchorElement>('a[href*="pilih"], a[href*="mula"]').forEach((a) => {
   if (ref && /^[a-z0-9-]{1,60}$/.test(ref)) a.search = `?ref=${ref}`;
   a.addEventListener('click', () => track('cta_clicked', { from: 'home' }));
 });
