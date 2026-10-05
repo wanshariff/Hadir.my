@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hadir.my//invite//MS
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:aisyah-7@hadir.my
+DTSTAMP:20261005T150027Z
+DTSTART:20261114T070000Z
+DTEND:20261114T100000Z
+SUMMARY:Majlis Hari Jadi: Aisyah\, 7 tahun
+LOCATION:Dewan Komuniti Presint 9 (contoh)\, Jalan P9E\, Presint 9\, 62250 Putrajaya
+GEO:2.9136;101.683
+URL:https://hadir.my/aisyah-7
+END:VEVENT
+END:VCALENDAR

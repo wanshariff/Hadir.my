@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hadir.my//invite//MS
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:raya-keluarga-hakim@hadir.my
+DTSTAMP:20261005T150027Z
+DTSTART:20270320T040000Z
+DTEND:20270320T090000Z
+SUMMARY:Rumah Terbuka: Keluarga Hakim
+LOCATION:Rumah terbuka (contoh)\, No. 8\, Jalan 4/2\, Seksyen 4\, 43650 Bandar Baru Bangi\, Selangor
+GEO:2.9526;101.769
+URL:https://hadir.my/raya-keluarga-hakim
+END:VEVENT
+END:VCALENDAR

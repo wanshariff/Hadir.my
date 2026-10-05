@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hadir.my//invite//MS
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:aqiqah-nur-iman@hadir.my
+DTSTAMP:20261005T150027Z
+DTSTART:20261121T030000Z
+DTEND:20261121T060000Z
+SUMMARY:Majlis Aqiqah: Nur Iman Sofea
+LOCATION:Rumah keluarga (contoh)\, No. 12\, Jalan Mawar 3\, Taman Mawar\, 43000 Kajang\, Selangor
+GEO:2.9935;101.7871
+URL:https://hadir.my/aqiqah-nur-iman
+END:VEVENT
+END:VCALENDAR
