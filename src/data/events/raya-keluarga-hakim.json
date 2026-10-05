@@ -1,0 +1,19 @@
+{
+  "slug": "raya-keluarga-hakim",
+  "type": "rumah_terbuka",
+  "lang": "bm",
+  "hostNames": "Keluarga Hakim",
+  "hostedBy": "Encik Hakim bin Osman & keluarga",
+  "startsAt": "2027-03-20T12:00:00+08:00",
+  "endsAt": "2027-03-20T17:00:00+08:00",
+  "venue": {
+    "name": "Rumah terbuka (contoh)",
+    "address": "No. 8, Jalan 4/2, Seksyen 4, 43650 Bandar Baru Bangi, Selangor",
+    "lat": 2.9526,
+    "lng": 101.769
+  },
+  "rsvpBy": "2027-03-13",
+  "maxPax": 10,
+  "note": "Datang bila-bila masa antara 12 tengah hari dan 5 petang.",
+  "hostKeyHash": "16848c555dc237b82d9072f3ca06710cdb9ea5618843f819b69824ce2359b136"
+}

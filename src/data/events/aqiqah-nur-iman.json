@@ -1,0 +1,19 @@
+{
+  "slug": "aqiqah-nur-iman",
+  "type": "aqiqah",
+  "lang": "bm",
+  "hostNames": "Nur Iman Sofea",
+  "hostedBy": "Faiz bin Rahman & Aina binti Kassim",
+  "startsAt": "2026-11-21T11:00:00+08:00",
+  "endsAt": "2026-11-21T14:00:00+08:00",
+  "venue": {
+    "name": "Rumah keluarga (contoh)",
+    "address": "No. 12, Jalan Mawar 3, Taman Mawar, 43000 Kajang, Selangor",
+    "lat": 2.9935,
+    "lng": 101.7871
+  },
+  "rsvpBy": "2026-11-14",
+  "maxPax": 8,
+  "note": "Majlis di rumah. Sila letak kereta di sepanjang Jalan Mawar 3.",
+  "hostKeyHash": "2f56db7f4882939106f73aee4f81dfa3df5717b7bebd4120a32ffb3fd340914f"
+}

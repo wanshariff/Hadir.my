@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+// Where every "Buat kad" leads. The editor (PRD F1) isn't open yet, so hosts join early access
+// and we set up their first invite with them (the concierge test).
+---
+<Base title="Buat kad · Hadir" description="Sertai akses awal Hadir. Kami bantu anda sediakan kad jemputan pertama, percuma.">
+  <SiteHeader current="mula" />
+  <main class="wrap">
+    <section class="intro">
+      <span class="badge">Akses awal</span>
+      <h1>Buat kad pertama anda bersama kami.</h1>
+      <p class="lede muted">Kami buka Hadir secara berperingkat. Tinggalkan e-mel dan kami akan hubungi anda dalam 2 hari bekerja untuk sediakan kad anda, percuma.</p>
+    </section>
+
+    <div class="grid">
+      <form class="panel panel-solid join" novalidate aria-labelledby="join-h">
+        <h2 id="join-h" class="h5">Daftar akses awal</h2>
+        <div class="field">
+          <label for="j-email">E-mel</label>
+          <input id="j-email" type="email" autocomplete="email" inputmode="email" required aria-describedby="j-email-hint" />
+          <p class="hint" id="j-email-hint">Kami guna e-mel ini untuk hubungi anda tentang kad anda sahaja.</p>
+          <p class="field-error" hidden>Sila isi e-mel yang sah.</p>
+        </div>
+        <div class="field">
+          <label for="j-type">Jenis majlis</label>
+          <select id="j-type">
+            <option value="kahwin">Kahwin</option>
+            <option value="aqiqah">Aqiqah</option>
+            <option value="rumah_terbuka">Rumah terbuka</option>
+            <option value="tahlil">Tahlil</option>
+            <option value="hari_jadi">Hari jadi</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="j-date">Bila majlis anda? (pilihan)</label>
+          <input id="j-date" type="month" />
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Daftar</button>
+        <p class="status hint" role="status" aria-live="polite"></p>
+      </form>
+
+      <section class="next" aria-labelledby="next-h">
+        <h2 id="next-h" class="h5">Apa berlaku seterusnya</h2>
+        <ol class="steps">
+          <li><span class="step-n figure">1</span><div><p class="h6">Kami hubungi anda</p><p class="muted">Dalam 2 hari bekerja, melalui e-mel.</p></div></li>
+          <li><span class="step-n figure">2</span><div><p class="h6">Kad anda siap</p><p class="muted">Kami sediakan kad dan pautan hadir.my anda.</p></div></li>
+          <li><span class="step-n figure">3</span><div><p class="h6">Kongsi dan kira</p><p class="muted">Anda dapat papan pemuka peribadi untuk lihat siapa yang hadir.</p></div></li>
+        </ol>
+        <a class="btn btn-ghost" href="/kad"><Icon name="eye" />Lihat contoh kad dahulu</a>
+      </section>
+    </div>
+  </main>
+  <SiteFooter />
+  <script src="../scripts/mula.ts"></script>
+</Base>
+
+<style>
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--space-4); display: grid; gap: var(--space-8); }
+  .intro { display: grid; gap: var(--space-3); justify-items: start; padding-top: var(--space-10); max-width: 36em; }
+  .intro h1 { font-size: clamp(var(--text-h3), 7vw, var(--text-h1)); }
+  .lede { font-size: var(--text-h5); }
+  .grid { display: grid; gap: var(--space-8); align-items: start; }
+  @media (min-width: 860px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .join { display: grid; gap: var(--space-4); padding: var(--space-6); }
+  .status { text-align: center; min-height: 1.5em; }
+  .next { display: grid; gap: var(--space-4); justify-items: start; padding-top: var(--space-2); }
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-4); }
+  .steps li { display: flex; gap: var(--space-4); align-items: flex-start; }
+  .steps li > div { display: grid; gap: 2px; }
+  .h6 { font-weight: var(--weight-body-strong); }
+  .step-n { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--badge-bg); color: var(--badge-fg); font-weight: 500; }
+</style>

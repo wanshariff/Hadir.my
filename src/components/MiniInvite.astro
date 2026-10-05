@@ -1,0 +1,53 @@
+---
+// A small, faithful rendering of an invite's cover for galleries and the hero phone. Links to the real guest view.
+import { formatDate, type HadirEvent } from '../lib/events';
+import { eventCopy } from '../lib/copy';
+
+interface Props { event: HadirEvent; size?: 'phone' | 'card'; label?: string }
+const { event, size = 'card', label } = Astro.props;
+const c = eventCopy[event.type][event.lang];
+const muted = event.type === 'tahlil';
+---
+<a class={`mini mini-${size}`} href={`/${event.slug}`} data-tone={muted ? 'muted' : undefined} aria-label={label ?? `${c.title}: ${event.hostNames}. Buka kad`}>
+  <span class="cover aurora">
+    <span class="badge">{c.title}</span>
+    <span class="names">{event.hostNames}</span>
+    <span class="date">{formatDate(event.startsAt, event.lang)}</span>
+  </span>
+  <span class="venue">{event.venue.name.replace(' (contoh)', '')}</span>
+  {size === 'phone' && (
+    <span class="rsvp" aria-hidden="true">
+      <span class="q">Adakah anda akan hadir?</span>
+      <span class="fake-btn">Hadir</span>
+      <span class="fake-btn ghost">Tak dapat hadir</span>
+    </span>
+  )}
+</a>
+
+<style>
+  .mini {
+    display: grid; align-content: start; overflow: hidden;
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    background: var(--surface-solid); color: var(--text); text-decoration: none;
+    transition: transform var(--motion-fast), border-color var(--motion-fast);
+  }
+  .mini:hover { border-color: var(--border-control); }
+  .mini:active { transform: scale(0.99); }
+  .mini[data-tone='muted'] { --accent: var(--color-neutral-300); --badge-bg: var(--surface-sunken); --badge-fg: var(--text-muted); --aurora-opacity: 0; }
+  .cover {
+    display: grid; justify-items: center; gap: var(--space-2); text-align: center;
+    padding: var(--space-8) var(--space-4) var(--space-6);
+  }
+  .names { font: var(--weight-display) var(--text-h4)/1.1 var(--font-display); letter-spacing: var(--tracking-display); text-wrap: balance; }
+  .date { font-weight: var(--weight-body-strong); font-size: 0.9375rem; }
+  .venue { padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.875rem; text-align: center; }
+  .mini-phone .cover { padding-top: var(--space-12); }
+  .mini-phone .names { font-size: var(--text-h3); }
+  .rsvp { display: grid; gap: var(--space-2); padding: var(--space-4); border-top: 1px solid var(--border); }
+  .q { font: var(--weight-display) var(--text-h5)/1.2 var(--font-display); }
+  .fake-btn {
+    display: grid; place-items: center; min-height: var(--target-min); border-radius: var(--radius-md);
+    background: var(--action-bg); color: var(--action-fg); font-weight: var(--weight-body-strong);
+  }
+  .fake-btn.ghost { background: transparent; color: var(--text); border: 1.5px solid var(--border-control); }
+</style>

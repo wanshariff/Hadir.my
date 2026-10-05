@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 
 // Fake-door pricing (PRD: validation). The Kawal Tetamu button records intent; checkout does not exist yet.
 // Price variants RM29 / RM35 / RM39 are assigned per browser; ?p=29 forces one for testing.
@@ -59,6 +60,7 @@ const paid = [
       </section>
     </main>
   </div>
+  <SiteFooter />
 
   <dialog class="dialog door" aria-labelledby="door-h">
     <h2 id="door-h" class="h5">Kawal Tetamu belum dibuka</h2>
@@ -85,7 +87,7 @@ const paid = [
 
 <style>
   .page { min-height: 100dvh; }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 var(--space-4) var(--space-16); display: grid; gap: var(--space-10); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--space-4); display: grid; gap: var(--space-10); }
   .intro { display: grid; gap: var(--space-3); padding-top: var(--space-8); max-width: 20em; }
   .intro h1 { font-size: clamp(var(--text-h3), 7vw, var(--text-h1)); }
   .lede { font-size: var(--text-h5); }

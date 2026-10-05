@@ -1,42 +1,30 @@
 import { track } from './track';
-import { api } from './api';
 
 const params = new URLSearchParams(location.search);
-const ref = params.get('ref');
 track('landing_viewed', { source: params.get('utm_source') ?? 'direct' });
 
-const form = document.querySelector<HTMLFormElement>('.join form')!;
-const email = form.querySelector<HTMLInputElement>('#j-email')!;
-const month = form.querySelector<HTMLInputElement>('#j-date')!;
-const err = form.querySelector<HTMLElement>('.field-error')!;
-const status = form.querySelector<HTMLElement>('.status')!;
-const btn = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+// Before / after: operated with buttons, not dragging (PRD: home page).
+const baButtons = document.querySelectorAll<HTMLButtonElement>('[data-ba]');
+baButtons.forEach((b) => b.addEventListener('click', () => {
+  baButtons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  document.querySelectorAll<HTMLElement>('[data-ba-panel]').forEach((p) => { p.hidden = p.dataset.baPanel !== b.dataset.ba; });
+}));
 
-const valid = () => {
-  const ok = email.checkValidity() && email.value.includes('@');
-  email.setAttribute('aria-invalid', String(!ok));
-  err.hidden = ok;
-  return ok;
-};
-email.addEventListener('blur', valid);
+// Kawal Tetamu demo: the stepper stops at the invitation's cap and says why.
+const CAP = 2;
+const out = document.querySelector<HTMLOutputElement>('.cap-out');
+const msg = document.querySelector<HTMLElement>('.cap-msg');
+let pax = 1;
+document.querySelectorAll<HTMLButtonElement>('[data-cap-step]').forEach((b) => b.addEventListener('click', () => {
+  const next = pax + Number(b.dataset.capStep);
+  if (msg) msg.hidden = next <= CAP;
+  pax = Math.min(CAP, Math.max(1, next));
+  if (out) out.textContent = String(pax);
+}));
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (!valid()) { email.focus(); return; }
-  btn.disabled = true;
-  status.textContent = 'Menyimpan…';
-  try {
-    const res = await api('/api/waitlist', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email: email.value.trim(), eventMonth: month.value || null, source: ref ? `invite:${ref}` : 'home' }),
-    });
-    if (!res.ok) throw new Error(String(res.status));
-    track('waitlist_joined', { source: ref ? 'invite' : 'home' });
-    status.textContent = 'Terima kasih. Kami akan hubungi anda dalam 2 hari bekerja.';
-    btn.hidden = true;
-  } catch {
-    status.textContent = 'Tak berjaya disimpan. Cuba sekali lagi.';
-    btn.disabled = false;
-  }
+// Carry the invite that sent this visitor through to sign-up, so the waitlist records it (PRD: invite as ad).
+const ref = params.get('ref');
+document.querySelectorAll<HTMLAnchorElement>('a[href*="mula"]').forEach((a) => {
+  if (ref && /^[a-z0-9-]{1,60}$/.test(ref)) a.search = `?ref=${ref}`;
+  a.addEventListener('click', () => track('cta_clicked', { from: 'home' }));
 });

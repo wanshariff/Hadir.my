@@ -196,7 +196,6 @@ dialog.dialog::backdrop { background: var(--scrim); }
 
 /* ---------- Preview banner ---------- */
 .preview-banner {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
   padding: var(--space-2) var(--space-4); text-align: center;
   background: var(--color-brand-950); color: var(--color-secondary-200);
   font-size: var(--text-small); font-weight: var(--weight-body-strong);

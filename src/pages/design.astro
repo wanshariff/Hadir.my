@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import { SCALES, STEPS, primitives, PAIRS, checkPair, light, dark } from '../lib/tokens';
 
 const inputs: Record<string, number> = { brand: 500, secondary: 500, success: 500, info: 500, warning: 300, error: 500 };
@@ -380,6 +381,7 @@ const counts = inventory.flatMap((g) => g.items).reduce((a, [, s]) => ({ ...a, [
       </div>
     </section>
   </main>
+  <SiteFooter />
 
   <script is:inline>
     (function () {

@@ -2,33 +2,75 @@
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import MiniInvite from '../components/MiniInvite.astro';
+import { events, getEvent } from '../lib/events';
 
-// Validation-phase home: the editor isn't open yet, so the CTA collects early hosts.
+// The front door (PRD: self-promoting marketing site). Section order follows the PRD's home page spec.
 // Guests arriving from an invite footer carry ?utm_source=invite&ref=<slug>.
+const hero = getEvent('sofea-adam')!;
+const TYPE_ORDER = ['kahwin', 'aqiqah', 'rumah_terbuka', 'tahlil', 'hari_jadi'];
+const gallery = TYPE_ORDER.map((t) => events.find((e) => e.type === t)).filter((e) => e !== undefined);
 const sides = [
   { label: 'Pihak lelaki', n: 212, of: 260 },
   { label: 'Pihak perempuan', n: 238, of: 280 },
 ];
 const total = sides.reduce((a, s) => a + s.n, 0);
+const pending = sides.reduce((a, s) => a + s.of - s.n, 0);
 ---
-<Base title="Hadir · Tahu siapa yang datang" description="Kad jemputan digital percuma untuk kahwin, aqiqah, rumah terbuka dan tahlil. Pautan selamat, tiada muat turun.">
-  <div class="aurora page">
-    <SiteHeader current="home" />
-    <main class="wrap">
-      <section class="hero">
+<Base title="Hadir · Tahu siapa yang datang" description="Kad jemputan digital percuma untuk kahwin, aqiqah, rumah terbuka dan tahlil, dengan jumlah tetamu sebenar. Pautan web, tiada muat turun.">
+  <SiteHeader current="home" />
+  <main>
+    <!-- Hero -->
+    <section class="hero aurora">
+      <div class="wrap hero-grid">
         <div class="hero-copy">
           <h1>Tahu siapa yang datang.</h1>
           <p class="lede">Kad jemputan digital yang tetamu jawab dengan sekali tekan, dan jumlah sebenar untuk katerer anda.</p>
-          <ul class="trust">
-            <li><Icon name="globe" />Pautan web</li>
-            <li><Icon name="file-x" />Tiada muat turun</li>
-            <li><Icon name="lock" />Data tetamu milik anda</li>
-          </ul>
+          <div class="ctas">
+            <a class="btn btn-primary" href="/mula">Buat kad percuma</a>
+            <a class="btn" href="/kad">Lihat contoh kad</a>
+          </div>
+          <p class="hint">Percuma untuk semua jenis majlis. Bayar sekali hanya jika perlu kawal tetamu.</p>
         </div>
+        <div class="phone" aria-label="Contoh kad jemputan">
+          <div class="phone-screen"><MiniInvite event={hero} size="phone" label="Contoh kad: Sofea dan Adam. Buka kad" /></div>
+        </div>
+      </div>
+    </section>
 
-        <figure class="panel count" aria-label="Contoh papan pemuka">
-          <figcaption class="eyebrow-label">Contoh · Walimatul Urus</figcaption>
-          <p class="count-total"><span class="figure">{total}</span> orang sah hadir</p>
+    <!-- Trust strip -->
+    <section class="trust" aria-label="Kenapa selamat">
+      <ul class="wrap trust-list">
+        <li><Icon name="globe" /><span><strong>Pautan web</strong><span class="muted">Dibuka terus di pelayar, di hadir.my.</span></span></li>
+        <li><Icon name="file-x" /><span><strong>Tiada muat turun</strong><span class="muted">Tiada fail APK, tiada aplikasi.</span></span></li>
+        <li><Icon name="lock" /><span><strong>Data milik anda</strong><span class="muted">Nombor telefon tetamu hanya untuk tuan rumah.</span></span></li>
+      </ul>
+    </section>
+
+    <!-- Before and after -->
+    <section class="wrap sec" aria-labelledby="ba-h">
+      <div class="sec-head">
+        <h2 id="ba-h">Daripada "Insya-Allah" kepada jumlah sebenar</h2>
+        <p class="muted">Katerer perlukan satu nombor. WhatsApp beri anda seratus jawapan yang berbeza.</p>
+      </div>
+      <div class="ba-switch" role="group" aria-label="Bandingkan">
+        <button class="btn" type="button" aria-pressed="true" data-ba="before">Sebelum</button>
+        <button class="btn" type="button" aria-pressed="false" data-ba="after">Dengan Hadir</button>
+      </div>
+      <div class="ba">
+        <div class="panel panel-solid ba-panel" data-ba-panel="before">
+          <ul class="chat" aria-label="Jawapan di WhatsApp">
+            <li><span class="who">Mak Long</span>Insya-Allah datang</li>
+            <li><span class="who">Hafiz</span>Nanti saya tanya orang rumah dulu</li>
+            <li><span class="who">Kak Ros</span>Datang, bawa family</li>
+            <li><span class="who">Pak Salleh</span>Insya-Allah</li>
+            <li class="silent"><span class="who">86 orang lagi</span>Tiada jawapan</li>
+          </ul>
+          <p class="guess">Anggaran untuk katerer: <strong>300? 400?</strong></p>
+        </div>
+        <div class="panel panel-solid ba-panel" data-ba-panel="after" hidden>
+          <p class="count"><span class="figure">{total}</span> orang sah hadir</p>
           <div class="sides">
             {sides.map((s) => (
               <div class="side">
@@ -37,80 +79,198 @@ const total = sides.reduce((a, s) => a + s.n, 0);
               </div>
             ))}
           </div>
-          <p class="hint">Bukan lagi "Insya-Allah" dan anggaran.</p>
-        </figure>
-      </section>
-
-      <section class="panel join" aria-labelledby="join-h">
-        <div class="join-copy">
-          <h2 id="join-h">Kami sedang buka secara berperingkat</h2>
-          <p class="muted">Tinggalkan e-mel. Kami akan bantu anda sediakan kad pertama, percuma.</p>
+          <p class="hint"><span class="figure">{pending}</span> belum jawab. Peringatan WhatsApp sedia untuk dihantar.</p>
         </div>
-        <form novalidate>
-          <div class="field">
-            <label for="j-email">E-mel</label>
-            <input id="j-email" type="email" autocomplete="email" inputmode="email" required />
-            <p class="field-error" hidden>Sila isi e-mel yang sah.</p>
-          </div>
-          <div class="field">
-            <label for="j-date">Bila majlis anda? (pilihan)</label>
-            <input id="j-date" type="month" />
-          </div>
-          <button class="btn btn-primary btn-block" type="submit">Buat kad percuma</button>
-          <p class="status hint" role="status" aria-live="polite"></p>
-        </form>
-      </section>
+      </div>
+    </section>
 
-      <section class="how" aria-labelledby="how-h">
-        <h2 id="how-h">Tiga langkah</h2>
-        <ol class="steps">
-          <li><span class="step-n figure">1</span><div><h3 class="h5">Reka</h3><p class="muted">Pilih jenis majlis: kahwin, aqiqah, rumah terbuka, tahlil atau hari jadi.</p></div></li>
-          <li><span class="step-n figure">2</span><div><h3 class="h5">Kongsi</h3><p class="muted">Hantar pautan di WhatsApp. Pratonton sudah tunjuk nama, tarikh dan tempat.</p></div></li>
-          <li><span class="step-n figure">3</span><div><h3 class="h5">Kira</h3><p class="muted">Lihat siapa yang hadir, ikut pihak, dan beri jumlah sebenar kepada katerer.</p></div></li>
-        </ol>
-      </section>
-    </main>
-  </div>
+    <!-- How it works -->
+    <section class="wrap sec" aria-labelledby="how-h">
+      <div class="sec-head"><h2 id="how-h">Tiga langkah</h2></div>
+      <ol class="steps">
+        <li class="panel panel-solid"><span class="step-n figure">1</span><h3 class="h5">Reka</h3><p class="muted">Pilih jenis majlis, isi tarikh dan tempat. Siap dalam 5 minit di telefon.</p></li>
+        <li class="panel panel-solid"><span class="step-n figure">2</span><h3 class="h5">Kongsi</h3><p class="muted">Hantar di WhatsApp. Pratonton pautan sudah tunjuk nama, tarikh dan tempat.</p></li>
+        <li class="panel panel-solid"><span class="step-n figure">3</span><h3 class="h5">Kira</h3><p class="muted">Tetamu jawab sekali tekan. Anda nampak jumlahnya, dikemas kini setiap 10 saat.</p></li>
+      </ol>
+    </section>
+
+    <!-- Kawal Tetamu demo -->
+    <section class="kawal" id="kawal-tetamu" aria-labelledby="kt-h">
+      <div class="wrap kawal-grid">
+        <div class="kawal-copy">
+          <span class="badge">Kawal Tetamu · akan dibuka</span>
+          <h2 id="kt-h">Jemputan untuk 2 orang, bermakna 2 orang.</h2>
+          <p class="muted">Setiap tetamu dapat pautan sendiri dengan had orang. Mak dan Abah urus senarai pihak masing-masing. Anda nampak semuanya, ikut pihak.</p>
+          <ul class="ticks">
+            <li><Icon name="check" />Jemputan bernama dengan had orang</li>
+            <li><Icon name="check" />Senarai berasingan untuk setiap pihak</li>
+            <li><Icon name="check" />Peringatan WhatsApp untuk yang belum jawab</li>
+            <li><Icon name="check" />Ringkasan untuk katerer</li>
+          </ul>
+          <div class="ctas">
+            <a class="btn" href="/harga">Lihat harga</a>
+            <a class="btn btn-ghost" href="/h/sofea-adam">Contoh papan pemuka<Icon name="arrow-right" /></a>
+          </div>
+        </div>
+        <div class="panel panel-solid cap-demo" aria-labelledby="cap-h">
+          <p class="eyebrow-label">Cuba sendiri</p>
+          <p id="cap-h" class="h5">Jemputan untuk Pak Long Kamal</p>
+          <p class="muted">Had: <span class="figure">2</span> orang</p>
+          <div class="stepper" role="group" aria-label="Bilangan orang">
+            <button type="button" class="btn btn-icon" data-cap-step="-1" aria-label="Kurang satu"><Icon name="minus" /></button>
+            <output class="cap-out" aria-live="polite">1</output>
+            <button type="button" class="btn btn-icon" data-cap-step="1" aria-label="Tambah satu"><Icon name="plus" /></button>
+          </div>
+          <p class="alert alert-info cap-msg" hidden><Icon name="info" /><span>Jemputan ini untuk 2 orang. Tanya tuan rumah jika perlu tambah.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Every event type -->
+    <section class="wrap sec" aria-labelledby="types-h">
+      <div class="sec-head row-head">
+        <div>
+          <h2 id="types-h">Untuk setiap majlis, sepanjang tahun</h2>
+          <p class="muted">Kahwin, aqiqah, rumah terbuka, tahlil dan hari jadi. Guna semula senarai tetamu untuk majlis seterusnya.</p>
+        </div>
+        <a class="btn" href="/kad">Semua contoh</a>
+      </div>
+      <ul class="types">
+        {gallery.map((e) => <li><MiniInvite event={e} /></li>)}
+      </ul>
+    </section>
+
+    <!-- Pricing teaser -->
+    <section class="wrap sec" aria-labelledby="price-h">
+      <div class="sec-head"><h2 id="price-h">Bayar sekali, hanya bila perlu</h2></div>
+      <div class="prices">
+        <div class="panel panel-solid price-card">
+          <p class="h5">Percuma</p>
+          <p class="price"><span class="cur">RM</span>0</p>
+          <p class="muted">Kad, RSVP, doa, peta dan kalendar untuk semua jenis majlis.</p>
+        </div>
+        <div class="panel panel-solid price-card paid">
+          <p class="h5">Kawal Tetamu</p>
+          <p class="price"><span class="cur">RM</span>35</p>
+          <p class="muted">Sekali bayar untuk satu majlis. Tiada langganan.</p>
+        </div>
+      </div>
+      <a class="btn" href="/harga">Bandingkan pelan<Icon name="arrow-right" /></a>
+    </section>
+
+    <!-- FAQ -->
+    <section class="wrap sec" id="soalan" aria-labelledby="faq-h">
+      <div class="sec-head"><h2 id="faq-h">Soalan lazim</h2></div>
+      <div class="accordion faq">
+        <details><summary>Bagaimana tetamu tahu pautan ini bukan penipuan?</summary><p>Kad Hadir sentiasa di hadir.my, dibuka di pelayar, dan tidak pernah minta anda muat turun apa-apa. Pratonton di WhatsApp sudah tunjuk nama, tarikh dan tempat. <a href="/selamat">Cara semak pautan</a>.</p></details>
+        <details><summary>Adakah Hadir menyimpan wang salam kaut?</summary><p>Tidak. Hadir hanya memaparkan kod QR DuitNow anda sendiri. Wang terus masuk ke akaun anda.</p></details>
+        <details><summary>Siapa boleh lihat nombor telefon tetamu?</summary><p>Hanya tuan rumah, dan pembantu yang menjemput tetamu itu. Data tetamu dipadam 90 hari selepas majlis, kecuali anda simpan untuk guna semula.</p></details>
+        <details><summary>Berapa lama pautan kekal aktif?</summary><p>Sehingga anda padam majlis.</p></details>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="wrap">
+      <div class="final aurora">
+        <h2>Majlis seterusnya, tanpa meneka.</h2>
+        <a class="btn btn-primary" href="/mula">Buat kad percuma</a>
+      </div>
+    </section>
+  </main>
+  <SiteFooter />
 
   <script src="../scripts/home.ts"></script>
 </Base>
 
 <style>
-  .page { min-height: 100dvh; }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 var(--space-4) var(--space-16); display: grid; gap: var(--space-12); }
-  .hero { display: grid; gap: var(--space-8); padding-top: var(--space-10); align-items: center; }
-  @media (min-width: 768px) { .hero { grid-template-columns: 1.2fr 1fr; } }
-  .hero-copy { display: grid; gap: var(--space-5); }
-  .hero h1 { font-size: clamp(var(--text-h2), 11vw, 4.768rem); line-height: 1.02; } /* h1 × 1.25², one step past the scale for the hero only */
-  .lede { font-size: var(--text-h5); color: var(--text-muted); max-width: 30ch; }
-  .trust { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
-  .trust li { display: flex; gap: var(--space-2); align-items: center; font-weight: var(--weight-body-strong); }
-  .trust .icon { color: var(--success-fg); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding-inline: var(--space-4); }
+  .sec { display: grid; gap: var(--space-6); padding-block: var(--space-12) 0; }
+  .sec-head { display: grid; gap: var(--space-2); max-width: 40em; }
+  .sec-head h2, .kawal h2, .final h2 { font-size: clamp(var(--text-h4), 5vw, var(--text-h2)); }
+  .row-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: var(--space-4); max-width: none; }
+  .row-head > div { display: grid; gap: var(--space-2); max-width: 40em; }
+  .ctas { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
-  .count { margin: 0; display: grid; gap: var(--space-4); padding: var(--space-6); }
-  .count-total { font-size: var(--text-h5); }
-  .count-total .figure { display: block; font-size: var(--text-h1); line-height: 1; font-weight: 500; letter-spacing: -0.03em; }
+  /* Hero */
+  .hero { padding-block: var(--space-10) var(--space-12); }
+  .hero-grid { display: grid; gap: var(--space-10); align-items: center; }
+  @media (min-width: 860px) { .hero-grid { grid-template-columns: 1.15fr 0.85fr; } }
+  .hero-copy { display: grid; gap: var(--space-5); }
+  .hero h1 { font-size: clamp(var(--text-h2), 11vw, 4.768rem); line-height: 1.02; } /* one scale step past h1, hero only */
+  .lede { font-size: var(--text-h5); color: var(--text-muted); max-width: 30ch; }
+  .phone {
+    justify-self: center; width: min(300px, 100%);
+    padding: 10px; border-radius: 40px; background: var(--color-brand-950);
+    border: 1px solid var(--border);
+  }
+  .phone-screen { border-radius: 30px; overflow: hidden; }
+  .phone-screen :global(.mini) { border: 0; border-radius: 0; }
+
+  /* Trust */
+  .trust { border-block: 1px solid var(--border); background: var(--surface); }
+  .trust-list { list-style: none; margin: 0 auto; padding-block: var(--space-5); display: grid; gap: var(--space-4); }
+  @media (min-width: 760px) { .trust-list { grid-template-columns: repeat(3, 1fr); } }
+  .trust-list li { display: flex; gap: var(--space-3); align-items: flex-start; }
+  .trust-list .icon { color: var(--success-fg); margin-top: 2px; }
+  .trust-list li > span { display: grid; }
+
+  /* Before / after */
+  .ba-switch { display: flex; gap: var(--space-2); }
+  .ba { max-width: 560px; }
+  .ba-panel { display: grid; gap: var(--space-4); padding: var(--space-6); }
+  .chat { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+  .chat li { display: grid; gap: 2px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--surface-sunken); max-width: 85%; }
+  .chat li.silent { background: transparent; border: 1.5px dashed var(--border-control); color: var(--text-muted); }
+  .who { font-size: var(--text-small); font-weight: var(--weight-body-strong); color: var(--text-muted); }
+  .guess { font-size: var(--text-h5); }
+  .count { font-size: var(--text-h5); }
+  .count .figure { display: block; font-size: var(--text-h1); line-height: 1; letter-spacing: -0.03em; }
   .sides { display: grid; gap: var(--space-3); }
   .side { display: grid; gap: var(--space-1); }
   .side-row { display: flex; justify-content: space-between; gap: var(--space-3); }
   .meter { height: 8px; border-radius: 999px; background: var(--surface-sunken); overflow: hidden; }
   .meter span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
 
-  .join { display: grid; gap: var(--space-6); padding: var(--space-6); }
-  @media (min-width: 768px) { .join { grid-template-columns: 1fr 1fr; align-items: start; } }
-  .join-copy { display: grid; gap: var(--space-2); }
-  .join h2 { font-size: var(--text-h4); }
-  .join form { display: grid; gap: var(--space-4); }
-  .status { text-align: center; min-height: 1.5em; }
+  /* Steps */
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  @media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .steps li { display: grid; gap: var(--space-2); align-content: start; }
+  .step-n { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--badge-bg); color: var(--badge-fg); font-weight: 500; margin-bottom: var(--space-2); }
 
-  .how { display: grid; gap: var(--space-5); }
-  .how h2 { font-size: var(--text-h3); }
-  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-4); }
-  @media (min-width: 768px) { .steps { grid-template-columns: repeat(3, 1fr); } }
-  .steps li { display: flex; gap: var(--space-4); align-items: flex-start; }
-  .steps > li > div { display: grid; gap: var(--space-1); }
-  .step-n {
-    flex: none; width: 40px; height: 40px; display: grid; place-items: center;
-    border-radius: 50%; background: var(--badge-bg); color: var(--badge-fg); font-weight: 500;
+  /* Kawal Tetamu */
+  .kawal { margin-top: var(--space-16); padding-block: var(--space-12); background: var(--surface-sunken); border-block: 1px solid var(--border); }
+  .kawal-grid { display: grid; gap: var(--space-8); align-items: center; }
+  @media (min-width: 860px) { .kawal-grid { grid-template-columns: 1.2fr 0.8fr; } }
+  .kawal-copy { display: grid; gap: var(--space-4); justify-items: start; }
+  .ticks { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }
+  .ticks li { display: flex; gap: var(--space-3); }
+  .ticks .icon { color: var(--success-fg); margin-top: 3px; }
+  .cap-demo { display: grid; gap: var(--space-3); padding: var(--space-6); }
+
+  /* Event types */
+  .types {
+    list-style: none; padding: 0 0 var(--space-2); margin: 0;
+    display: grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 1fr); gap: var(--space-3);
+    overflow-x: auto; scroll-snap-type: x mandatory;
+  }
+  .types li { scroll-snap-align: start; display: grid; }
+  @media (min-width: 960px) { .types { grid-auto-flow: row; grid-template-columns: repeat(5, 1fr); overflow: visible; } }
+
+  /* Pricing */
+  .prices { display: grid; gap: var(--space-3); max-width: 720px; }
+  @media (min-width: 640px) { .prices { grid-template-columns: 1fr 1fr; } }
+  .price-card { display: grid; gap: var(--space-2); padding: var(--space-6); }
+  .price-card.paid { border: 2px solid var(--action-bg); }
+  .price { font: 500 var(--text-h2)/1 var(--font-mono); letter-spacing: -0.03em; }
+  .cur { font-size: 0.45em; vertical-align: 0.9em; margin-right: 2px; letter-spacing: 0; }
+  .sec > .btn { justify-self: start; }
+
+  .faq { max-width: 720px; }
+
+  /* Final CTA */
+  .final {
+    margin-top: var(--space-16); padding: var(--space-12) var(--space-6);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    display: grid; gap: var(--space-5); justify-items: center; text-align: center;
   }
 </style>
