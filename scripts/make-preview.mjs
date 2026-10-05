@@ -63,9 +63,12 @@ for (const [src, dest] of Object.entries(PAGES)) {
   let html = readFileSync(join(SRC, src), 'utf8');
   html = await inlineScripts(html);
   html = relativise(html, dest);
-  if (dest === 'main.html') html = stripSkeleton(html);
   mkdirSync(dirname(join(OUT, dest)), { recursive: true });
-  writeFileSync(join(OUT, dest), html);
+  // The hub ships twice: index.html as a full document (GitHub Pages and other static hosts),
+  // main.html without a skeleton (hosts that wrap the main page themselves).
+  if (dest === 'main.html') writeFileSync(join(OUT, 'index.html'), html);
+  writeFileSync(join(OUT, dest), dest === 'main.html' ? stripSkeleton(html) : html);
 }
 for (const f of STATIC) if (existsSync(join(SRC, f))) copyFileSync(join(SRC, f), join(OUT, f));
+writeFileSync(join(OUT, '.nojekyll'), ''); // serve files as-is on GitHub Pages
 console.log(`preview-site: ${Object.keys(PAGES).length} pages`);
