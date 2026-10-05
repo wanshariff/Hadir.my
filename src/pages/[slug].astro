@@ -1,0 +1,223 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { events, formatDate, formatTime, mapsLinks, googleCalendarUrl, type HadirEvent } from '../lib/events';
+import { eventCopy, ui } from '../lib/copy';
+
+export function getStaticPaths() {
+  return events.map((event) => ({ params: { slug: event.slug }, props: { event } }));
+}
+
+const { event } = Astro.props as { event: HadirEvent };
+const t = ui[event.lang];
+const c = eventCopy[event.type][event.lang];
+const date = formatDate(event.startsAt, event.lang);
+const time = `${formatTime(event.startsAt, event.lang)} – ${formatTime(event.endsAt, event.lang)}`;
+const maps = mapsLinks(event);
+const calTitle = `${c.title}: ${event.hostNames}`;
+const gcal = googleCalendarUrl(event, calTitle);
+const rsvpBy = event.rsvpBy ? formatDate(`${event.rsvpBy}T12:00:00+08:00`, event.lang) : null;
+const ctaHref = `/?utm_source=invite&ref=${event.slug}`;
+
+// The link preview alone must show names, date and venue (PRD: scam-safe sharing).
+const title = `${c.title} · ${event.hostNames}`;
+const description = `${date}, ${time} · ${event.venue.name}. ${t.safe}.`;
+---
+<Base title={title} description={description} lang={event.lang === 'bm' ? 'ms' : 'en'} tone={event.type === 'tahlil' ? 'muted' : undefined} noindex>
+  <main class="invite" id="top"
+    data-slug={event.slug}
+    data-starts={event.startsAt}
+    data-max-pax={event.maxPax}
+    data-ics={`/${event.slug}.ics`}
+    data-t={JSON.stringify({ saving: t.saving, saved: t.saved, retry: t.retry, failed: t.failed, nameRequired: t.nameRequired, people: t.people, yes: t.yes, no: t.no, thanksYes: t.thanksYes, thanksNo: t.thanksNo, music: t.music, pause: t.pause, edit: t.edit, inDays: `${t.countdown} {n} ${t.days}` })}
+  >
+    <header class="cover">
+      {event.musicUrl && (
+        <button class="music" type="button" aria-pressed="false" aria-label={t.music} data-src={event.musicUrl}>
+          <Icon name="music" />
+        </button>
+      )}
+      <p class="eyebrow">{c.title}</p>
+      {event.hostedBy && <p class="hosted-by">{event.hostedBy}</p>}
+      <p class="intro">{c.intro}</p>
+      <h1 class="names">{event.hostNames}</h1>
+      <p class="cover-date">{date}</p>
+      <p class="countdown" hidden><span data-countdown></span></p>
+    </header>
+
+    <section class="card details" aria-labelledby="details-h">
+      <h2 id="details-h" class="sr-only">{t.when}</h2>
+      <div class="row">
+        <Icon name="calendar" />
+        <div>
+          <p class="label">{t.when}</p>
+          <p>{date}<br />{time}</p>
+        </div>
+      </div>
+      <div class="row" id="tempat">
+        <Icon name="map-pin" />
+        <div>
+          <p class="label">{t.where}</p>
+          <p><strong>{event.venue.name}</strong><br />{event.venue.address}</p>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn" href={maps.waze} rel="noopener" target="_blank"><Icon name="navigation" />Waze</a>
+        <a class="btn" href={maps.google} rel="noopener" target="_blank"><Icon name="map" />Google Maps</a>
+        <a class="btn btn-wide" href={gcal} rel="noopener" target="_blank" data-calendar><Icon name="calendar-plus" />{t.calendar}</a>
+      </div>
+      {event.note && <p class="note">{event.note}</p>}
+    </section>
+
+    <section class="card rsvp" id="rsvp" aria-labelledby="rsvp-h">
+      <h2 id="rsvp-h">{t.rsvpTitle}</h2>
+      {rsvpBy && <p class="hint">{t.rsvpBy(rsvpBy)}</p>}
+
+      <div class="mine" hidden>
+        <p class="label">{t.yourAnswers}</p>
+        <ul class="mine-list"></ul>
+        <button class="btn btn-block" type="button" data-new>
+          <Icon name="user-plus" />{t.answerForOther}
+        </button>
+      </div>
+
+      <form novalidate>
+        <div class="choice" role="group" aria-label={t.rsvpTitle}>
+          <button class="btn" type="button" data-status="hadir" aria-pressed="false"><Icon name="check" />{t.yes}</button>
+          <button class="btn" type="button" data-status="tak_hadir" aria-pressed="false"><Icon name="x" />{t.no}</button>
+        </div>
+
+        <div class="fields" hidden>
+          <div class="field">
+            <label for="f-name">{t.name}</label>
+            <input id="f-name" name="name" autocomplete="name" maxlength="80" required aria-describedby="f-name-err" />
+            <p class="error" id="f-name-err" hidden></p>
+          </div>
+          <div class="field" data-pax-field>
+            <span class="label-like" id="f-pax-l">{t.pax}</span>
+            <div class="stepper" role="group" aria-labelledby="f-pax-l">
+              <button type="button" class="btn" data-step="-1" aria-label="-1"><Icon name="minus" /></button>
+              <output id="f-pax" aria-live="polite">1</output>
+              <button type="button" class="btn" data-step="1" aria-label="+1"><Icon name="plus" /></button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-phone">{t.phone}</label>
+            <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" aria-describedby="f-phone-why" />
+            <p class="hint" id="f-phone-why">{t.phoneWhy}</p>
+          </div>
+          <details class="field">
+            <summary>{t.doa}</summary>
+            <label for="f-msg" class="sr-only">{t.doa}</label>
+            <textarea id="f-msg" name="message" maxlength="500"></textarea>
+          </details>
+          <button class="btn btn-primary btn-block" type="submit">{t.send}</button>
+          <p class="status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+
+      <div class="thanks" hidden>
+        <p class="thanks-msg"></p>
+        <p class="hint">{t.ownEvent}</p>
+        <a class="btn btn-block" href={`${ctaHref}&utm_medium=thanks`} data-track="cta_from_invite">{t.ownEventCta}</a>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p class="safe"><Icon name="shield-check" />{t.safe} · <a href="/selamat">{t.safeMore}</a></p>
+      <p class="made"><a href={`${ctaHref}&utm_medium=footer`} data-track="cta_from_invite">{t.madeWith} · {t.makeYours}</a></p>
+    </footer>
+
+    <nav class="bar" aria-label="Pintasan">
+      <a href="#rsvp"><Icon name="circle-check" /><span>Hadir</span></a>
+      <a href="#tempat"><Icon name="map-pin" /><span>Peta</span></a>
+      <a href={gcal} rel="noopener" target="_blank" data-calendar><Icon name="calendar-plus" /><span>Kalendar</span></a>
+    </nav>
+  </main>
+
+  <script src="../scripts/invite.ts"></script>
+</Base>
+
+<style>
+  .invite {
+    max-width: 560px; margin: 0 auto;
+    padding: 0 16px calc(var(--bar-h) + 32px);
+    font-size: 18px; /* elder readers */
+  }
+  .cover {
+    position: relative;
+    text-align: center;
+    padding: 56px 8px 40px;
+  }
+  .eyebrow {
+    display: inline-block; margin: 0 0 20px; padding: 6px 14px;
+    border-radius: 999px; background: var(--coral-soft);
+    font-size: 15px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .hosted-by, .intro { margin: 0 0 8px; color: var(--ink-2); }
+  .names {
+    font: 400 clamp(40px, 12vw, 56px)/1.1 var(--font-display);
+    margin: 12px 0 16px; text-wrap: balance;
+  }
+  .cover-date { font-weight: 600; margin: 0; }
+  .countdown { margin: 8px 0 0; color: var(--ink-2); }
+  .music {
+    position: absolute; top: 12px; right: 0;
+    width: 48px; height: 48px; border-radius: 50%;
+    display: grid; place-items: center;
+    border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer;
+  }
+  .music[aria-pressed='true'] { background: var(--ink); color: var(--paper); }
+
+  .card + .card { margin-top: var(--gap); }
+  .row { display: flex; gap: 14px; align-items: flex-start; }
+  .row + .row { margin-top: 16px; }
+  .row .icon { margin-top: 4px; }
+  .row p { margin: 0; }
+  .label, .label-like { font-weight: 600; color: var(--ink-2); font-size: 15px; display: block; margin-bottom: 6px; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+  .btn-wide { grid-column: 1 / -1; }
+  .note { margin: 16px 0 0; padding-top: 16px; border-top: 1px solid var(--line); color: var(--ink-2); }
+
+  .rsvp h2 { margin: 0 0 4px; font-size: 22px; }
+  .rsvp .hint { margin-bottom: 16px; }
+  .choice { display: grid; gap: 8px; margin: 16px 0; }
+  .choice .btn { min-height: 56px; font-size: 18px; }
+  .fields { margin-top: 8px; }
+  .stepper { display: flex; align-items: center; gap: 12px; }
+  .stepper .btn { width: 48px; padding: 0; }
+  .stepper output { min-width: 3ch; text-align: center; font-size: 22px; font-weight: 700; }
+  summary { cursor: pointer; font-weight: 600; min-height: 48px; display: flex; align-items: center; }
+  details[open] summary { margin-bottom: 8px; }
+  .status { min-height: 1.5em; margin: 8px 0 0; text-align: center; color: var(--ink-2); }
+  .mine { margin-bottom: 16px; }
+  .mine-list { list-style: none; padding: 0; margin: 0 0 12px; }
+  .thanks-msg { font-size: 20px; font-weight: 600; margin: 8px 0 16px; padding: 14px 16px; border-radius: 10px; background: var(--ok-soft); color: var(--ok); }
+
+  .foot { text-align: center; margin-top: 32px; font-size: 15px; color: var(--ink-2); }
+  .safe { display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: wrap; }
+  .safe .icon { width: 18px; height: 18px; color: var(--ok); }
+  .made a { display: inline-block; padding: 12px; }
+
+  .bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    height: calc(var(--bar-h) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--surface); border-top: 1px solid var(--line);
+  }
+  .bar a {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    text-decoration: none; font-size: 13px; font-weight: 600;
+  }
+  :global(html) { scroll-padding-bottom: calc(var(--bar-h) + 16px); scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { :global(html) { scroll-behavior: auto; } }
+</style>
+
+<style is:global>
+  .mine-list li {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .mine-list li .btn { padding: 0 16px; }
+</style>

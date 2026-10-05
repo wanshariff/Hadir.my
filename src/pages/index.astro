@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+
+// Validation-phase home: the editor isn't open yet, so the CTA collects early hosts.
+// Guests arriving from an invite footer carry ?utm_source=invite&ref=<slug>.
+---
+<Base title="Hadir · Tahu siapa yang datang" description="Kad jemputan digital percuma untuk kahwin, aqiqah, rumah terbuka dan tahlil. Pautan selamat, tiada muat turun.">
+  <main class="wrap">
+    <p class="brand">hadir.my</p>
+    <h1>Tahu siapa yang datang.</h1>
+    <p class="lede">Kad jemputan digital yang tetamu boleh jawab dengan sekali tekan, dan jumlah tetamu sebenar untuk katerer anda.</p>
+
+    <ul class="trust">
+      <li><Icon name="globe" />Pautan web</li>
+      <li><Icon name="file-x" />Tiada muat turun</li>
+      <li><Icon name="lock" />Data tetamu milik anda</li>
+    </ul>
+
+    <section class="card join" aria-labelledby="join-h">
+      <h2 id="join-h">Kami sedang buka secara berperingkat</h2>
+      <p>Tinggalkan e-mel. Kami akan bantu anda sediakan kad pertama, percuma.</p>
+      <form novalidate>
+        <div class="field">
+          <label for="j-email">E-mel</label>
+          <input id="j-email" type="email" autocomplete="email" inputmode="email" required />
+          <p class="error" hidden>Sila isi e-mel yang sah.</p>
+        </div>
+        <div class="field">
+          <label for="j-date">Bila majlis anda? (pilihan)</label>
+          <input id="j-date" type="month" />
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Buat kad percuma</button>
+        <p class="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <ol class="steps">
+      <li><strong>Reka.</strong> Pilih jenis majlis, isi butiran.</li>
+      <li><strong>Kongsi.</strong> Hantar pautan di WhatsApp.</li>
+      <li><strong>Kira.</strong> Lihat siapa yang hadir, ikut pihak.</li>
+    </ol>
+
+    <p class="links"><a href="/harga">Harga</a> · <a href="/selamat">Cara semak pautan</a></p>
+  </main>
+
+  <script src="../scripts/home.ts"></script>
+</Base>
+
+<style>
+  .wrap { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; }
+  .brand { font-weight: 700; margin: 12px 0 0; }
+  h1 { font: 400 clamp(40px, 11vw, 64px)/1.05 var(--font-display); margin: 32px 0 16px; }
+  .lede { font-size: 19px; color: var(--ink-2); margin: 0 0 24px; }
+  .trust { list-style: none; padding: 0; margin: 0 0 32px; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .trust li { display: flex; gap: 8px; align-items: center; font-weight: 600; }
+  .trust .icon { color: var(--ok); }
+  .join h2 { margin: 0 0 4px; font-size: 20px; }
+  .join > p { margin: 0 0 16px; color: var(--ink-2); }
+  .status { text-align: center; color: var(--ink-2); min-height: 1.5em; }
+  .steps { margin: 32px 0; padding-left: 1.25em; font-size: 18px; }
+  .steps li { padding: 4px 0; }
+  .links a { display: inline-block; padding: 12px 4px; }
+</style>

@@ -1,0 +1,6 @@
+# Copy to .dev.vars for `npm run preview`.
+DATABASE_URL=postgres://user:pass@ep-xxx.ap-southeast-1.aws.neon.tech/hadir?sslmode=require
+# Random string; salts IP hashes and token hashes.
+HASH_SALT=change-me
+# Set to 1 to use an in-memory store instead of Neon (local dev only).
+DEV_MEMORY_DB=0

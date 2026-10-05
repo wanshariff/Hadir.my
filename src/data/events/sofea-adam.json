@@ -1,0 +1,19 @@
+{
+  "slug": "sofea-adam",
+  "type": "kahwin",
+  "lang": "bm",
+  "hostNames": "Sofea & Adam",
+  "hostedBy": "Encik Rahman bin Yusof & Puan Zaleha binti Omar",
+  "startsAt": "2026-12-12T11:00:00+08:00",
+  "endsAt": "2026-12-12T16:00:00+08:00",
+  "venue": {
+    "name": "Dewan Seri Melati (contoh)",
+    "address": "Jalan Plumbum 7/102, Seksyen 7, 40000 Shah Alam, Selangor",
+    "lat": 3.0738,
+    "lng": 101.5183
+  },
+  "rsvpBy": "2026-12-05",
+  "maxPax": 10,
+  "note": "Kod pakaian: tema pastel. Tempat letak kereta di belakang dewan.",
+  "hostKeyHash": "56a2be3f045ca496cb1ddd987fda81925c3948fc8ee8ed2cc46ec66895f313ed"
+}

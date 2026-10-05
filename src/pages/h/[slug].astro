@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { events, formatDate, type HadirEvent } from '../../lib/events';
+import { eventCopy } from '../../lib/copy';
+
+// Host dashboard (PRD F6) for the concierge phase. Access: /h/<slug>#k=<host key>.
+// The key stays in the fragment so it never reaches server logs; it is sent as a Bearer token.
+export function getStaticPaths() {
+  return events.map((event) => ({ params: { slug: event.slug }, props: { event } }));
+}
+
+const { event } = Astro.props as { event: HadirEvent };
+const c = eventCopy[event.type].bm;
+const date = formatDate(event.startsAt, 'bm');
+const link = `https://hadir.my/${event.slug}`;
+const shareText = `${c.title}: ${event.hostNames}\n${date}, ${event.venue.name}\n\nSila jawab di sini: ${link}\n\nPautan ini dibuka di pelayar, tiada aplikasi perlu dimuat turun.`;
+const wa = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+---
+<Base title={`Tetamu · ${event.hostNames}`} description="Papan pemuka tuan rumah" noindex>
+  <main class="wrap" data-slug={event.slug}>
+    <p class="eyebrow">{c.title} · {date}</p>
+    <h1>{event.hostNames}</h1>
+
+    <p class="card locked" hidden>Pautan ini tidak lengkap. Buka pautan papan pemuka yang kami hantar kepada anda.</p>
+
+    <div class="dash" hidden>
+      <section class="stats" aria-label="Ringkasan">
+        <div class="card stat main"><p class="n" data-people>–</p><p>orang hadir</p></div>
+        <div class="card stat"><p class="n" data-yes>–</p><p>jawapan hadir</p></div>
+        <div class="card stat"><p class="n" data-no>–</p><p>tak dapat hadir</p></div>
+      </section>
+
+      <div class="share">
+        <a class="btn btn-primary" href={wa} target="_blank" rel="noopener" data-share><Icon name="send" />Kongsi ke WhatsApp</a>
+        <button class="btn" type="button" data-copy><Icon name="clipboard-copy" />Salin senarai</button>
+      </div>
+      <p class="hint" role="status" aria-live="polite" data-msg>Dikemas kini setiap 10 saat.</p>
+
+      <div class="card list-card">
+        <table>
+          <thead><tr><th scope="col">Nama</th><th scope="col">Orang</th><th scope="col">Telefon</th><th scope="col">Doa</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <p class="empty" hidden>Belum ada jawapan. Kongsi pautan untuk mula.</p>
+      </div>
+    </div>
+  </main>
+  <script src="../../scripts/host.ts"></script>
+</Base>
+
+<style>
+  .wrap { max-width: 880px; margin: 0 auto; padding: 24px 16px 64px; }
+  .eyebrow { color: var(--ink-2); margin: 12px 0 4px; font-weight: 600; }
+  h1 { font: 400 clamp(30px, 8vw, 44px)/1.15 var(--font-display); margin: 0 0 24px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat.main { grid-column: 1 / -1; }
+  @media (min-width: 768px) { .stats { grid-template-columns: 2fr 1fr 1fr; } .stat.main { grid-column: auto; } }
+  .stat p { margin: 0; color: var(--ink-2); }
+  .stat .n { font-size: 36px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .stat.main .n { font-size: 56px; }
+  .share { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+  .list-card { margin-top: 12px; padding: 0; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th { color: var(--ink-2); font-weight: 600; }
+  .empty { padding: 20px; margin: 0; color: var(--ink-2); }
+</style>
+
+<style is:global>
+  /* Rows are rendered by host.ts, so these can't be scoped. */
+  .list-card th, .list-card td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .list-card td:nth-child(2) { font-variant-numeric: tabular-nums; }
+  tr.no td { color: var(--ink-2); }
+</style>

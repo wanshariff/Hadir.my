@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+
+const checks = [
+  { icon: 'globe', title: 'Pautan bermula dengan hadir.my', body: 'Kad Hadir yang sebenar sentiasa di hadir.my/nama-majlis. Tiada pautan pendek, tiada subdomain pelik.' },
+  { icon: 'file-x', title: 'Tiada fail untuk dimuat turun', body: 'Kad Hadir dibuka terus di pelayar. Jika pautan minta anda muat turun fail, terutamanya fail .apk, jangan buka.' },
+  { icon: 'eye', title: 'Pratonton menunjukkan butiran majlis', body: 'Di WhatsApp, pratonton pautan sudah memaparkan nama, tarikh dan tempat. Anda boleh semak sebelum membuka.' },
+  { icon: 'lock', title: 'Kami hanya minta nama', body: 'RSVP hanya perlukan nama anda. Nombor telefon adalah pilihan. Kami tidak akan minta kata laluan, kod OTP atau butiran bank.' },
+];
+---
+<Base title="Cara semak pautan · Hadir" description="Cara mengenal kad jemputan Hadir yang sebenar dan mengelak penipuan fail APK.">
+  <main class="wrap">
+    <a class="home" href="/">hadir.my</a>
+    <h1>Selamat dibuka. Ini caranya untuk semak.</h1>
+    <p class="lede">Sejak 2023, ada penipu menghantar "kad kahwin" palsu dalam bentuk fail APK. Kad Hadir tidak pernah begitu.</p>
+    <ol class="checks">
+      {checks.map((c) => (
+        <li class="card">
+          <Icon name={c.icon} />
+          <div><h2>{c.title}</h2><p>{c.body}</p></div>
+        </li>
+      ))}
+    </ol>
+    <p class="card warn"><strong>Ragu-ragu?</strong> Tanya terus kepada orang yang menjemput anda sebelum membuka apa-apa pautan.</p>
+  </main>
+</Base>
+
+<style>
+  .wrap { max-width: 640px; margin: 0 auto; padding: 24px 16px 64px; font-size: 18px; }
+  .home { font-weight: 700; text-decoration: none; display: inline-block; padding: 12px 0; }
+  h1 { font: 400 clamp(30px, 7vw, 42px)/1.15 var(--font-display); margin: 16px 0 12px; text-wrap: balance; }
+  .lede { color: var(--ink-2); margin: 0 0 28px; }
+  .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .checks li { display: flex; gap: 14px; }
+  .checks .icon { width: 24px; height: 24px; color: var(--ok); margin-top: 2px; }
+  .checks h2 { font-size: 18px; margin: 0 0 4px; }
+  .checks p { margin: 0; color: var(--ink-2); }
+  .warn { margin-top: 24px; background: var(--coral-soft); border-color: transparent; }
+</style>
