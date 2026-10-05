@@ -1,0 +1,62 @@
+---
+// Preview-only landing page: every screen of the validation slice, one tap away.
+// Injected at /preview by astro.config.mjs when PUBLIC_PREVIEW=1; never part of production.
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+
+const screens = [
+  { href: '/sofea-adam', icon: 'mail-open', title: 'Kad jemputan tetamu', who: 'Tetamu', body: 'What a guest sees from a WhatsApp forward. Try the RSVP, then "Jawab untuk orang lain".' },
+  { href: '/h/sofea-adam', icon: 'users', title: 'Papan pemuka tuan rumah', who: 'Tuan rumah', body: 'Headcount and the response list. Your RSVPs from the invite show up here, alongside 3 example replies.' },
+  { href: '/', icon: 'house', title: 'Laman utama', who: 'Bakal tuan rumah', body: 'Where "Buat kad anda" on every invite lands. Collects early hosts while the editor is being built.' },
+  { href: '/harga', icon: 'tag', title: 'Harga', who: 'Bakal tuan rumah', body: 'Fake-door test for Kawal Tetamu at RM29, RM35 or RM39.' },
+  { href: '/selamat', icon: 'shield-check', title: 'Cara semak pautan', who: 'Tetamu', body: 'How to tell a real Hadir invite from an APK scam.' },
+  { href: '/design', icon: 'palette', title: 'Design system', who: 'Pasukan', body: 'Tokens, contrast checks, type, Aurora rules and every component in use.' },
+];
+---
+<Base title="Hadir Preview" description="Click-through preview of the Hadir validation slice." banner={false}>
+  <main class="hub aurora">
+    <header class="hub-head">
+      <p class="badge">Pratonton · 5 Okt 2026</p>
+      <h1>Hadir, validation slice</h1>
+      <p class="lede">Six screens from the concierge build. Everything works; answers are stored in this browser only, so nothing you type reaches a server.</p>
+    </header>
+    <ul class="screens">
+      {screens.map((s) => (
+        <li>
+          <a class="panel screen" href={s.href}>
+            <span class="screen-icon"><Icon name={s.icon} /></span>
+            <span class="screen-text">
+              <span class="eyebrow-label">{s.who}</span>
+              <span class="screen-title">{s.title}</span>
+              <span class="muted">{s.body}</span>
+            </span>
+            <Icon name="arrow-right" />
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="hint foot">Best viewed at phone width. Use your browser's back button to return here, or "Semua skrin" in the top bar.</p>
+  </main>
+</Base>
+
+<style>
+  .hub { max-width: 720px; margin: 0 auto; padding: var(--space-10) var(--space-4) var(--space-16); display: grid; gap: var(--space-8); }
+  .hub-head { display: grid; gap: var(--space-3); justify-items: start; }
+  .hub-head h1 { font-size: clamp(var(--text-h3), 8vw, var(--text-h1)); }
+  .lede { font-size: var(--text-h5); color: var(--text-muted); max-width: 40ch; }
+  .screens { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .screen {
+    display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-4); align-items: center;
+    color: var(--text); text-decoration: none;
+    transition: border-color var(--motion-fast), transform var(--motion-fast);
+  }
+  .screen:hover { border-color: var(--border-control); }
+  .screen:active { transform: scale(0.99); }
+  .screen-icon {
+    width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--radius-md);
+    background: var(--badge-bg); color: var(--badge-fg);
+  }
+  .screen-text { display: grid; gap: 2px; min-width: 0; }
+  .screen-title { font: var(--weight-display) var(--text-h5)/1.25 var(--font-display); letter-spacing: var(--tracking-display); }
+  .foot { text-align: center; }
+</style>

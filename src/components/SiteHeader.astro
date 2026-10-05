@@ -1,0 +1,37 @@
+---
+// Marketing app bar. The guest invite and host dashboard don't use it: guests should see only the invite.
+interface Props { current?: 'home' | 'harga' | 'selamat' | 'design' }
+const { current } = Astro.props;
+const links = [
+  { href: '/harga', label: 'Harga', key: 'harga' },
+  { href: '/selamat', label: 'Semak pautan', key: 'selamat' },
+];
+---
+<header class="site-header">
+  <a class="wordmark" href="/" aria-current={current === 'home' ? 'page' : undefined}>
+    <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--color-brand-500)" /><path d="M10 16.5l4 4 8-9" fill="none" stroke="var(--color-secondary-500)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    hadir.my
+  </a>
+  <nav aria-label="Utama">
+    {links.map((l) => <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>{l.label}</a>)}
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    max-width: 960px; margin: 0 auto; padding: var(--space-3) var(--space-4);
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap;
+  }
+  .wordmark {
+    display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--target-min);
+    color: var(--text); text-decoration: none;
+    font: var(--weight-display) var(--text-h5)/1 var(--font-display); letter-spacing: var(--tracking-display);
+  }
+  .wordmark svg { width: 28px; height: 28px; }
+  nav { display: flex; gap: var(--space-1); }
+  nav a {
+    display: inline-flex; align-items: center; min-height: var(--target-min); padding: 0 var(--space-3);
+    color: var(--text); text-decoration: none; font-weight: var(--weight-body-strong); border-radius: var(--radius-sm);
+  }
+  nav a[aria-current='page'] { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; text-decoration-color: var(--accent); }
+</style>

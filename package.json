@@ -1,0 +1,28 @@
+{
+  "name": "hadir",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/gen-events.mjs && astro build",
+    "preview": "npm run build && wrangler pages dev dist",
+    "new-event": "node scripts/new-event.mjs",
+    "test": "node scripts/gen-events.mjs && node --test 'server/**/*.test.ts' 'src/**/*.test.ts'",
+    "check": "tsc --noEmit -p . && tsc --noEmit -p functions",
+    "preview:site": "node scripts/gen-events.mjs && PUBLIC_PREVIEW=1 astro build && node scripts/make-preview.mjs"
+  },
+  "dependencies": {
+    "@fontsource/figtree": "^5.3.0",
+    "@fontsource/fraunces": "^5.3.0",
+    "@fontsource/roboto-mono": "^5.3.0",
+    "@neondatabase/serverless": "^1.2.0",
+    "astro": "^7.3.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261005.1",
+    "@types/node": "^22.20.5",
+    "lucide-static": "^1.52.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.147.0"
+  }
+}

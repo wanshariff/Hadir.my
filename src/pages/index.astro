@@ -1,0 +1,116 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+
+// Validation-phase home: the editor isn't open yet, so the CTA collects early hosts.
+// Guests arriving from an invite footer carry ?utm_source=invite&ref=<slug>.
+const sides = [
+  { label: 'Pihak lelaki', n: 212, of: 260 },
+  { label: 'Pihak perempuan', n: 238, of: 280 },
+];
+const total = sides.reduce((a, s) => a + s.n, 0);
+---
+<Base title="Hadir · Tahu siapa yang datang" description="Kad jemputan digital percuma untuk kahwin, aqiqah, rumah terbuka dan tahlil. Pautan selamat, tiada muat turun.">
+  <div class="aurora page">
+    <SiteHeader current="home" />
+    <main class="wrap">
+      <section class="hero">
+        <div class="hero-copy">
+          <h1>Tahu siapa yang datang.</h1>
+          <p class="lede">Kad jemputan digital yang tetamu jawab dengan sekali tekan, dan jumlah sebenar untuk katerer anda.</p>
+          <ul class="trust">
+            <li><Icon name="globe" />Pautan web</li>
+            <li><Icon name="file-x" />Tiada muat turun</li>
+            <li><Icon name="lock" />Data tetamu milik anda</li>
+          </ul>
+        </div>
+
+        <figure class="panel count" aria-label="Contoh papan pemuka">
+          <figcaption class="eyebrow-label">Contoh · Walimatul Urus</figcaption>
+          <p class="count-total"><span class="figure">{total}</span> orang sah hadir</p>
+          <div class="sides">
+            {sides.map((s) => (
+              <div class="side">
+                <div class="side-row"><span>{s.label}</span><span class="figure">{s.n} / {s.of}</span></div>
+                <div class="meter" role="img" aria-label={`${s.n} daripada ${s.of} dijemput`}><span style={`width:${Math.round((s.n / s.of) * 100)}%`}></span></div>
+              </div>
+            ))}
+          </div>
+          <p class="hint">Bukan lagi "Insya-Allah" dan anggaran.</p>
+        </figure>
+      </section>
+
+      <section class="panel join" aria-labelledby="join-h">
+        <div class="join-copy">
+          <h2 id="join-h">Kami sedang buka secara berperingkat</h2>
+          <p class="muted">Tinggalkan e-mel. Kami akan bantu anda sediakan kad pertama, percuma.</p>
+        </div>
+        <form novalidate>
+          <div class="field">
+            <label for="j-email">E-mel</label>
+            <input id="j-email" type="email" autocomplete="email" inputmode="email" required />
+            <p class="field-error" hidden>Sila isi e-mel yang sah.</p>
+          </div>
+          <div class="field">
+            <label for="j-date">Bila majlis anda? (pilihan)</label>
+            <input id="j-date" type="month" />
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Buat kad percuma</button>
+          <p class="status hint" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="how" aria-labelledby="how-h">
+        <h2 id="how-h">Tiga langkah</h2>
+        <ol class="steps">
+          <li><span class="step-n figure">1</span><div><h3 class="h5">Reka</h3><p class="muted">Pilih jenis majlis: kahwin, aqiqah, rumah terbuka, tahlil atau hari jadi.</p></div></li>
+          <li><span class="step-n figure">2</span><div><h3 class="h5">Kongsi</h3><p class="muted">Hantar pautan di WhatsApp. Pratonton sudah tunjuk nama, tarikh dan tempat.</p></div></li>
+          <li><span class="step-n figure">3</span><div><h3 class="h5">Kira</h3><p class="muted">Lihat siapa yang hadir, ikut pihak, dan beri jumlah sebenar kepada katerer.</p></div></li>
+        </ol>
+      </section>
+    </main>
+  </div>
+
+  <script src="../scripts/home.ts"></script>
+</Base>
+
+<style>
+  .page { min-height: 100dvh; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 var(--space-4) var(--space-16); display: grid; gap: var(--space-12); }
+  .hero { display: grid; gap: var(--space-8); padding-top: var(--space-10); align-items: center; }
+  @media (min-width: 768px) { .hero { grid-template-columns: 1.2fr 1fr; } }
+  .hero-copy { display: grid; gap: var(--space-5); }
+  .hero h1 { font-size: clamp(var(--text-h2), 11vw, 4.768rem); line-height: 1.02; } /* h1 × 1.25², one step past the scale for the hero only */
+  .lede { font-size: var(--text-h5); color: var(--text-muted); max-width: 30ch; }
+  .trust { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
+  .trust li { display: flex; gap: var(--space-2); align-items: center; font-weight: var(--weight-body-strong); }
+  .trust .icon { color: var(--success-fg); }
+
+  .count { margin: 0; display: grid; gap: var(--space-4); padding: var(--space-6); }
+  .count-total { font-size: var(--text-h5); }
+  .count-total .figure { display: block; font-size: var(--text-h1); line-height: 1; font-weight: 500; letter-spacing: -0.03em; }
+  .sides { display: grid; gap: var(--space-3); }
+  .side { display: grid; gap: var(--space-1); }
+  .side-row { display: flex; justify-content: space-between; gap: var(--space-3); }
+  .meter { height: 8px; border-radius: 999px; background: var(--surface-sunken); overflow: hidden; }
+  .meter span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+
+  .join { display: grid; gap: var(--space-6); padding: var(--space-6); }
+  @media (min-width: 768px) { .join { grid-template-columns: 1fr 1fr; align-items: start; } }
+  .join-copy { display: grid; gap: var(--space-2); }
+  .join h2 { font-size: var(--text-h4); }
+  .join form { display: grid; gap: var(--space-4); }
+  .status { text-align: center; min-height: 1.5em; }
+
+  .how { display: grid; gap: var(--space-5); }
+  .how h2 { font-size: var(--text-h3); }
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-4); }
+  @media (min-width: 768px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .steps li { display: flex; gap: var(--space-4); align-items: flex-start; }
+  .steps > li > div { display: grid; gap: var(--space-1); }
+  .step-n {
+    flex: none; width: 40px; height: 40px; display: grid; place-items: center;
+    border-radius: 50%; background: var(--badge-bg); color: var(--badge-fg); font-weight: 500;
+  }
+</style>

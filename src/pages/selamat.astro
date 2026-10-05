@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+
+const checks = [
+  { icon: 'globe', title: 'Pautan bermula dengan hadir.my', body: 'Kad Hadir yang sebenar sentiasa di hadir.my/nama-majlis. Tiada pautan pendek, tiada subdomain pelik.' },
+  { icon: 'file-x', title: 'Tiada fail untuk dimuat turun', body: 'Kad Hadir dibuka terus di pelayar. Jika pautan minta anda muat turun fail, terutamanya fail .apk, jangan buka.' },
+  { icon: 'eye', title: 'Pratonton menunjukkan butiran majlis', body: 'Di WhatsApp, pratonton pautan sudah memaparkan nama, tarikh dan tempat. Anda boleh semak sebelum membuka.' },
+  { icon: 'lock', title: 'Kami hanya minta nama', body: 'RSVP hanya perlukan nama anda. Nombor telefon adalah pilihan. Kami tidak akan minta kata laluan, kod OTP atau butiran bank.' },
+];
+---
+<Base title="Cara semak pautan · Hadir" description="Cara mengenal kad jemputan Hadir yang sebenar dan mengelak penipuan fail APK.">
+  <SiteHeader current="selamat" />
+  <main class="wrap">
+    <header class="intro">
+      <h1>Selamat dibuka. Ini caranya untuk semak.</h1>
+      <p class="lede muted">Sejak 2023, ada penipu menghantar "kad kahwin" palsu dalam bentuk fail APK. Kad Hadir tidak pernah begitu.</p>
+    </header>
+    <ul class="checks">
+      {checks.map((c) => (
+        <li class="panel panel-solid">
+          <Icon name={c.icon} />
+          <div><h2 class="h5">{c.title}</h2><p class="muted">{c.body}</p></div>
+        </li>
+      ))}
+    </ul>
+    <p class="alert alert-warning"><Icon name="triangle-alert" /><span><strong>Ragu-ragu?</strong> Tanya terus kepada orang yang menjemput anda sebelum membuka apa-apa pautan.</span></p>
+  </main>
+</Base>
+
+<style>
+  /* No Aurora here: this page is read closely by wary, often older readers. */
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 var(--space-4) var(--space-16); display: grid; gap: var(--space-6); font-size: var(--text-guest); }
+  .intro { display: grid; gap: var(--space-3); padding-top: var(--space-8); }
+  .intro h1 { font-size: clamp(var(--text-h3), 7vw, var(--text-h2)); }
+  .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .checks li { display: flex; gap: var(--space-4); }
+  .checks li > .icon { width: 24px; height: 24px; color: var(--success-fg); margin-top: 2px; }
+  .checks li > div { display: grid; gap: var(--space-1); }
+</style>

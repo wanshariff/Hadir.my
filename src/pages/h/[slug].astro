@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { events, formatDate, type HadirEvent } from '../../lib/events';
+import { eventCopy } from '../../lib/copy';
+
+// Host dashboard (PRD F6) for the concierge phase. Access: /h/<slug>#k=<host key>.
+// The key stays in the fragment so it never reaches server logs; it is sent as a Bearer token.
+export function getStaticPaths() {
+  return events.map((event) => ({ params: { slug: event.slug }, props: { event } }));
+}
+
+const { event } = Astro.props as { event: HadirEvent };
+const c = eventCopy[event.type].bm;
+const date = formatDate(event.startsAt, 'bm');
+const link = `https://hadir.my/${event.slug}`;
+const shareText = `${c.title}: ${event.hostNames}\n${date}, ${event.venue.name}\n\nSila jawab di sini: ${link}\n\nPautan ini dibuka di pelayar, tiada aplikasi perlu dimuat turun.`;
+const wa = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+---
+<Base title={`Tetamu · ${event.hostNames}`} description="Papan pemuka tuan rumah" noindex>
+  <main class="wrap" data-slug={event.slug}>
+    <header class="head aurora">
+      <p class="badge">{c.title}</p>
+      <h1>{event.hostNames}</h1>
+      <p class="muted">{date} · <span class="mono slug">hadir.my/{event.slug}</span></p>
+    </header>
+
+    <p class="alert alert-warning locked" hidden><Icon name="lock" />Pautan ini tidak lengkap. Buka pautan papan pemuka yang kami hantar kepada anda.</p>
+
+    <div class="dash">
+      <section class="stats" aria-label="Ringkasan">
+        <div class="panel stat main"><p class="stat-value"><span class="skeleton" data-people>00</span></p><p class="stat-label">orang hadir</p></div>
+        <div class="panel stat"><p class="stat-value"><span class="skeleton" data-yes>0</span></p><p class="stat-label">jawapan hadir</p></div>
+        <div class="panel stat"><p class="stat-value"><span class="skeleton" data-no>0</span></p><p class="stat-label">tak dapat hadir</p></div>
+      </section>
+
+      <div class="share">
+        <a class="btn btn-primary" href={wa} target="_blank" rel="noopener" data-share><Icon name="send" />Kongsi ke WhatsApp</a>
+        <button class="btn" type="button" data-copy><Icon name="clipboard-copy" />Salin senarai</button>
+      </div>
+      <p class="hint" role="status" aria-live="polite" data-msg>Dikemas kini setiap 10 saat.</p>
+
+      <section class="panel list-panel" aria-labelledby="list-h">
+        <h2 id="list-h" class="h5">Jawapan</h2>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th scope="col">Nama</th><th scope="col">Orang</th><th scope="col">Telefon</th><th scope="col">Doa</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="empty muted" hidden>Belum ada jawapan. Kongsi pautan untuk mula.</p>
+      </section>
+    </div>
+  </main>
+  <script src="../../scripts/host.ts"></script>
+</Base>
+
+<style>
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 var(--space-4) var(--space-16); display: grid; gap: var(--space-5); }
+  .head { display: grid; gap: var(--space-3); justify-items: start; padding: var(--space-10) 0 var(--space-4); }
+  .head h1 { font-size: var(--text-h2); }
+  .slug { white-space: nowrap; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+  .stat.main { grid-column: 1 / -1; }
+  .stat.main .stat-value { font-size: var(--text-h1); }
+  @media (min-width: 768px) {
+    .stats { grid-template-columns: 2fr 1fr 1fr; }
+    .stat.main { grid-column: auto; }
+  }
+  .share { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .list-panel { padding: var(--space-5) 0 var(--space-2); display: grid; gap: var(--space-3); }
+  .list-panel h2 { padding: 0 var(--space-5); }
+  .empty { padding: var(--space-2) var(--space-5) var(--space-4); }
+</style>
